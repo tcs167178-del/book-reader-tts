@@ -1,0 +1,168 @@
+name: Publish Book Reader TTS 0.4.10
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-0.4.10.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-book-reader-tts-0.4.10
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'tcs167178-del/book-reader-tts'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Verify pinned artifacts and publish prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          """Publish verified 0.4.10 artifacts without rebuilding or overwriting releases."""
+          import hashlib
+          import json
+          import os
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          
+          REPO = "tcs167178-del/book-reader-tts"
+          SOURCE = "6b3b597538a1dfc350b59e69190a96fa27444da0"
+          TARGET = os.environ["GITHUB_SHA"]
+          VERSION = "0.4.10"
+          EXPECTED = {
+              "main.js": "83ec49802d62be7dfc02f25c2e151182ec688401",
+              "manifest.json": "23f3330a10226b8355d9fc84011918d7808821c0",
+              "styles.css": "9d8b4c86791d238a02085d01ea16d1aeead583b5",
+              "LICENSE": "c4625ecbba6f8452a18ee706a208fb3b3bf69212",
+              "NOTICE.md": "b2b4980739cd427f882c1e7b5245d2df1bd5254f",
+              "book-reader-tts-source-0.4.10.zip": "76d4dec3e8b9b0d345825a6e8dc86d35d2e00304",
+          }
+          API = "https://api.github.com/repos/" + REPO
+          TOKEN = os.environ["GH_TOKEN"]
+          
+          def request(method, path, payload=None, missing_ok=False, asset_name=None):
+              url = API + path
+              if asset_name is not None:
+                  url = "https://uploads.github.com/repos/" + REPO + path
+                  url += "?" + urllib.parse.urlencode({"name": asset_name})
+                  data = payload
+                  content_type = "application/octet-stream"
+              else:
+                  data = None if payload is None else json.dumps(payload).encode("utf-8")
+                  content_type = "application/json"
+              headers = {"Authorization": "Bearer " + TOKEN,
+                         "Accept": "application/vnd.github+json",
+                         "X-GitHub-Api-Version": "2022-11-28",
+                         "User-Agent": "book-reader-tts-0.4.10-publisher",
+                         "Content-Type": content_type}
+              req = urllib.request.Request(url, data=data, headers=headers, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=90) as response:
+                      return json.load(response)
+              except urllib.error.HTTPError as error:
+                  if missing_ok and error.code == 404:
+                      return None
+                  raise RuntimeError(f"GitHub HTTP {error.code}: {method} {path}") from None
+          
+          def check_tag(required=False):
+              ref = request("GET", "/git/ref/tags/" + VERSION, missing_ok=not required)
+              if ref is None:
+                  return
+              obj = ref["object"]
+              for _ in range(8):
+                  if obj["type"] != "tag":
+                      break
+                  obj = request("GET", "/git/tags/" + obj["sha"])["object"]
+              if obj["type"] != "commit" or obj["sha"] not in (SOURCE, TARGET):
+                  raise RuntimeError("Existing tag has an unexpected target; refusing to retag")
+          
+          # The publishing commit may add the workflow, but must not change the plugin.
+          tree = request("GET", "/git/trees/" + TARGET + "?recursive=1")
+          if tree.get("truncated"):
+              raise RuntimeError("Cannot verify truncated target tree")
+          blobs = {entry["path"]: entry["sha"] for entry in tree["tree"] if entry["type"] == "blob"}
+          for name, sha in EXPECTED.items():
+              if blobs.get(name) != sha:
+                  raise RuntimeError("Target commit changes a pinned artifact: " + name)
+          files = {}
+          for name, expected_sha in EXPECTED.items():
+              url = f"https://raw.githubusercontent.com/{REPO}/{SOURCE}/{name}"
+              with urllib.request.urlopen(url, timeout=90) as response:
+                  data = response.read()
+              sha = hashlib.sha1(f"blob {len(data)}\0".encode("ascii") + data).hexdigest()
+              if sha != expected_sha:
+                  raise RuntimeError("Source checksum mismatch: " + name)
+              files[name] = data
+              print("Verified source:", name, len(data), "bytes")
+          manifest = json.loads(files["manifest.json"])
+          if manifest.get("id") != "book-reader-tts" or manifest.get("version") != VERSION:
+              raise RuntimeError("Unexpected plugin ID or manifest version")
+          check_tag()
+          
+          # Authenticated listing includes drafts, so reruns do not duplicate releases.
+          release = None
+          page = 1
+          while True:
+              batch = request("GET", f"/releases?per_page=100&page={page}")
+              matches = [r for r in batch if r["tag_name"] == VERSION]
+              if matches:
+                  if len(matches) != 1:
+                      raise RuntimeError("Ambiguous release; refusing to modify it")
+                  release = matches[0]
+                  break
+              if len(batch) < 100:
+                  break
+              page += 1
+          if release is None:
+              release = request("POST", "/releases", {
+                  "tag_name": VERSION, "target_commitish": TARGET, "name": VERSION,
+                  "body": "Book details and continue reading.\n\n"
+                          "BRAT installation assets for the existing 0.4.10 build: main.js, "
+                          "manifest.json and styles.css, plus license notices and editable source.\n\n"
+                          "Plugin artifacts are unchanged from commit " + SOURCE + ". "
+                          "The release target only adds a publishing workflow. "
+                          "All six assets are verified against pinned Git blob hashes and SHA-256 digests.\n\n"
+                          "Experimental prerelease; native iPad runtime behavior was not retested during publishing.",
+                  "draft": True, "prerelease": True, "make_latest": "false"})
+          release_id = release["id"]
+          if release["draft"] and release["target_commitish"] != TARGET:
+              raise RuntimeError("Existing draft targets another commit; refusing to modify it")
+          existing = {a["name"]: a for a in release.get("assets", [])}
+          
+          def verify_asset(asset, name):
+              digest = "sha256:" + hashlib.sha256(files[name]).hexdigest()
+              if (asset.get("state") != "uploaded" or asset.get("size") != len(files[name])
+                      or asset.get("digest") != digest):
+                  raise RuntimeError("Asset mismatch; refusing to overwrite: " + name)
+          
+          for name, data in files.items():
+              asset = existing.get(name)
+              if asset is None:
+                  if not release["draft"]:
+                      raise RuntimeError("Published release lacks an asset; refusing to change it")
+                  asset = request("POST", f"/releases/{release_id}/assets", data, asset_name=name)
+              verify_asset(asset, name)
+              print("Verified release asset:", name)
+          release = request("GET", f"/releases/{release_id}")
+          assets = {a["name"]: a for a in release.get("assets", [])}
+          for name in files:
+              verify_asset(assets[name], name)
+          check_tag()
+          if release["draft"]:
+              release = request("PATCH", f"/releases/{release_id}",
+                                {"draft": False, "prerelease": True, "make_latest": "false"})
+          if release["draft"] or not release["prerelease"]:
+              raise RuntimeError("Release is not a published prerelease")
+          check_tag(required=True)
+          print("Verified published release:", release["html_url"])
+          PY
