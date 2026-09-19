@@ -6,14 +6,14 @@ An independent experimental fork of [Book Reader by Elton Labs](https://github.c
 
 1. In Obsidian, install and enable **BRAT** from Community plugins.
 2. Open BRAT settings and choose **Add beta plugin**.
-3. Enter `tcs167178-del/book-reader-tts`, select release **0.4.6**, and install.
+3. Enter `tcs167178-del/book-reader-tts`, select release **0.4.7**, and install.
 4. Enable **Book Reader TTS Preview** in Community plugins, then use its library command.
 
 The original Book Reader and this fork have different plugin IDs and separate settings. Their reading progress is not automatically migrated. Installing this plugin does not transfer your books.
 
 ### 中文安装说明
 
-在 iPad 的 Obsidian 中安装并启用 BRAT，进入 BRAT 设置，点击 **Add beta plugin**，填写 `tcs167178-del/book-reader-tts`，选择 **0.4.6** 并安装。随后在第三方插件中启用 **Book Reader TTS Preview**。无需在“文件”App 中操作隐藏的 `.obsidian` 文件夹。
+在 iPad 的 Obsidian 中安装并启用 BRAT，进入 BRAT 设置，点击 **Add beta plugin**，填写 `tcs167178-del/book-reader-tts`，选择 **0.4.7** 并安装。随后在第三方插件中启用 **Book Reader TTS Preview**。无需在“文件”App 中操作隐藏的 `.obsidian` 文件夹。
 
 ## Features
 
@@ -39,7 +39,7 @@ This is a preview build, not an Obsidian community-directory release. Windows bu
 
 ## Build and test
 
-Download and extract `book-reader-tts-source-0.4.6.zip` from the repository or release first; it contains the complete source, tests and build configuration. Use a current Node.js release compatible with the dependencies.
+Download and extract `book-reader-tts-source-0.4.7.zip` from the repository or release first; it contains the complete source, tests and build configuration. Use a current Node.js release compatible with the dependencies.
 
 ```sh
 npm ci
@@ -49,6 +49,14 @@ npm run build
 
 Release assets are `main.js`, `manifest.json` and `styles.css`. The bundled PDF worker is embedded in main.js. Source and dependency licenses remain available in this repository and the source archive attached to the release.
 
-## Voice diagnostics (0.4.6)
+## Voice diagnostics (0.4.7)
 
 Open a book → Voice → Manage and install voices → All voices diagnostics (unfiltered). The report includes every voice returned by Web Speech, including IDs and languages outside Chinese/English/Japanese. Export saves a JSON file in the vault root; it contains no book text or credentials, but follows your normal vault sync rules. Test system default voice (Chinese) requests zh-CN without assigning a voice and does not change saved preferences. It cannot guarantee Siri voice access. Returning to the app refreshes the voice list.
+
+## Library and reading insights (0.4.7)
+
+The Collections panel supports adding tag-backed collections, renaming, hiding/restoring and ordering with touch-friendly up/down controls. Hiding a collection does not delete its books. Book actions remain under the ellipsis button; bulk actions appear in Edit mode. Books and PDF filters are available. Bookshelf appearance settings remain accessible from the panel and current-category row.
+
+Reading time starts automatically after opening a book and can be paused in the footer. Only visible foreground reader intervals are counted; long suspended intervals are discarded. Per-book totals start with this update and follow file renames. Reading Insights shows recorded daily/lifetime totals, a seven-day chart, prior-week comparison, reading streak and most-read books by recorded time. Foreground time is an estimate of reading, not an attention measurement. Per-book totals, collection visibility and order remain device-local in this version; existing tag and reading-position synchronization remains unchanged. Historical daily totals are preserved, but per-book history is never fabricated.
+
+51 automated checks passed; tablet-size browser component previews were inspected. Actual iPad WebView behavior remains to be verified.

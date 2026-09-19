@@ -13683,197 +13683,6 @@ __export(main_exports, {
 });
 module.exports = __toCommonJS(main_exports);
 
-// src/reader-sync-ui.js
-var import_obsidian = require("obsidian");
-
-// src/reader-sync.js
-var SYNC_FOLDER = "Book Reader Sync";
-var maps = ["bookArchives", "bookNoteLinks", "bookTemplates"];
-var shelf = ["libraryTitle", "librarySubtitle", "libraryLabels", "libraryTagNames"];
-var preferences = ["fontSize", "fontFamily", "lineHeight", "theme", "textAlign", "sharedSpeechRate"];
-var clone = (value) => JSON.parse(JSON.stringify(value));
-var equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-var key = (...parts) => JSON.stringify(parts);
-function snapshot(plugin) {
-  const out = {};
-  const s = plugin.settings;
-  for (const name of maps) for (const [path5, value] of Object.entries(s[name] || {})) out[key("map", name, path5)] = value;
-  for (const [path5, tags] of Object.entries(s.bookTags || {})) for (const tag of tags) out[key("tag", path5, tag)] = true;
-  for (const name of shelf) if (s[name] !== void 0) out[key("shelf", name)] = s[name];
-  if (s.readerSyncPreferences) {
-    for (const name of preferences) if (s[name] !== void 0) out[key("pref", name)] = s[name];
-  }
-  for (const [path5, value] of Object.entries(plugin.progress || {})) out[key("progress", path5)] = value;
-  for (const [path5, list] of Object.entries(plugin.highlights || {})) for (const value of list) if (value.id != null) out[key("highlight", path5, String(value.id))] = value;
-  return clone(out);
-}
-function mergeRecords(documents) {
-  const records = {};
-  for (const doc of documents) {
-    if ((doc == null ? void 0 : doc.version) !== 1 || !doc.records || typeof doc.records !== "object" || Array.isArray(doc.records)) throw Error("Unsupported or damaged reader sync file");
-    for (const [k, r] of Object.entries(doc.records)) {
-      const parts = JSON.parse(k);
-      if (!Array.isArray(parts) || parts.some((p) => typeof p !== "string" || ["__proto__", "constructor", "prototype"].includes(p)) || !r || !Number.isFinite(r.time) || typeof r.device !== "string" || !r.deleted && !Object.hasOwn(r, "value")) throw Error("Unsupported or damaged reader sync file");
-      const [type2, a] = parts, v = r.value;
-      const allowed = type2 === "map" && maps.includes(a) && parts.length === 3 || type2 === "tag" && parts.length === 3 || type2 === "shelf" && shelf.includes(a) && parts.length === 2 || type2 === "pref" && preferences.includes(a) && parts.length === 2 || type2 === "progress" && parts.length === 2 || type2 === "highlight" && parts.length === 3;
-      if (!allowed) throw Error("Unsupported or damaged reader sync file");
-      if (!r.deleted) {
-        const object = v && typeof v === "object" && !Array.isArray(v);
-        if (type2 === "progress" && (!object || !Number.isFinite(v.pct) || v.pct < 0 || v.pct > 1) || type2 === "highlight" && (!object || v.id == null || String(v.id) !== parts[2]) || type2 === "tag" && v !== true || type2 === "map" && (a === "bookArchives" ? typeof v !== "boolean" : typeof v !== "string") || type2 === "shelf" && (a === "libraryTagNames" ? !Array.isArray(v) || v.some((t2) => typeof t2 !== "string") : a === "libraryLabels" ? !object : typeof v !== "string") || type2 === "pref" && !["number", "string"].includes(typeof v)) throw Error("Unsupported or damaged reader sync file");
-      }
-      const prev = records[k];
-      if (!prev || r.time > prev.time || r.time === prev.time && r.device > prev.device) records[k] = clone(r);
-    }
-  }
-  return records;
-}
-function captureChanges(records, before, after, device, time) {
-  for (const k of /* @__PURE__ */ new Set([...Object.keys(before), ...Object.keys(after)])) {
-    if (equal(before[k], after[k])) continue;
-    records[k] = Object.hasOwn(after, k) ? { time, device, value: clone(after[k]) } : { time, device, deleted: true };
-  }
-}
-function applyRecords(plugin, records) {
-  var _a2, _b, _c;
-  const s = plugin.settings;
-  for (const [k, r] of Object.entries(records)) {
-    const [type2, a, b] = JSON.parse(k), value = r.deleted ? void 0 : clone(r.value);
-    if (type2 === "map" && maps.includes(a)) {
-      (_a2 = s[a]) != null ? _a2 : s[a] = {};
-      if (r.deleted) delete s[a][b];
-      else s[a][b] = value;
-    }
-    if (type2 === "tag") {
-      (_b = s.bookTags) != null ? _b : s.bookTags = {};
-      const tags = new Set(s.bookTags[a] || []);
-      r.deleted ? tags.delete(b) : tags.add(b);
-      s.bookTags[a] = [...tags].sort();
-    }
-    if (type2 === "shelf" && shelf.includes(a)) {
-      if (r.deleted) delete s[a];
-      else s[a] = value;
-    }
-    if (type2 === "pref" && s.readerSyncPreferences && preferences.includes(a)) {
-      if (!r.deleted) s[a] = value;
-    }
-    if (type2 === "progress") {
-      if (!equal(plugin.progress[a], value)) (_c = plugin._recordBackup) == null ? void 0 : _c.call(plugin, a, plugin.progress[a], Date.now());
-      if (r.deleted) delete plugin.progress[a];
-      else plugin.progress[a] = value;
-    }
-    if (type2 === "highlight") {
-      const list = plugin.highlights[a] || [];
-      plugin.highlights[a] = list.filter((h) => String(h.id) !== b);
-      if (!r.deleted) plugin.highlights[a].push(value);
-    }
-  }
-}
-var ReaderSync = class {
-  constructor(plugin, device, onError = () => {
-  }, storage = null) {
-    this.plugin = plugin;
-    this.device = device;
-    this.onError = onError;
-    this.storage = storage;
-    this.cacheKey = `reader-sync-pending:${device}`;
-    this.records = {};
-    this.baseline = {};
-    this.pending = {};
-    this.chain = Promise.resolve();
-    this.ready = false;
-    this.clock = 0;
-    this.status = "";
-  }
-  async initialize() {
-    var _a2;
-    const ad = this.plugin.app.vault.adapter;
-    if (!await ad.exists(SYNC_FOLDER)) await this.plugin.app.vault.createFolder(SYNC_FOLDER);
-    const docs = await this.readDocuments();
-    const merged = mergeRecords(docs);
-    this.clock = Math.max(0, ...Object.values(merged).map((r) => r.time));
-    const current = snapshot(this.plugin);
-    for (const k of Object.keys(merged)) delete current[k];
-    captureChanges(this.records, {}, current, this.device, 1);
-    const cached = (_a2 = this.storage) == null ? void 0 : _a2.getItem(this.cacheKey);
-    this.records = mergeRecords([{ version: 1, records: this.records }, ...docs.filter((d) => d.device === this.device), ...cached ? [JSON.parse(cached)] : []]);
-    const all = mergeRecords([{ version: 1, records: this.records }, ...docs]);
-    this.clock = Math.max(this.clock, ...Object.values(all).map((r) => r.time));
-    this.remotePositions = new Set(Object.entries(all).filter(([k, r]) => JSON.parse(k)[0] === "progress" && r.device !== this.device && !r.deleted).map(([k]) => JSON.parse(k)[1]));
-    applyRecords(this.plugin, all);
-    this.baseline = snapshot(this.plugin);
-    this.ready = true;
-    await this.write();
-    await this.plugin._saveLocalData();
-  }
-  async readDocuments() {
-    const ad = this.plugin.app.vault.adapter, listing = await ad.list(SYNC_FOLDER), docs = [];
-    for (const path5 of listing.files.filter((p) => p.endsWith(".json"))) {
-      const doc = JSON.parse(await ad.read(path5));
-      mergeRecords([doc]);
-      docs.push(doc);
-    }
-    return docs;
-  }
-  observe() {
-    var _a2;
-    if (!this.ready) return;
-    const current = snapshot(this.plugin);
-    if (!this.plugin.settings.readerSyncPreferences) {
-      for (const k of Object.keys(this.baseline)) if (JSON.parse(k)[0] === "pref") delete this.baseline[k];
-    }
-    this.clock = Math.max(Date.now(), this.clock + 1);
-    captureChanges(this.pending, this.baseline, current, this.device, this.clock);
-    try {
-      (_a2 = this.storage) == null ? void 0 : _a2.setItem(this.cacheKey, JSON.stringify({ version: 1, records: { ...this.records, ...this.pending } }));
-    } catch (e) {
-      this.onError(e);
-    }
-    this.baseline = current;
-  }
-  schedule() {
-    if (!this.ready) return;
-    this.observe();
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => this.refresh().catch(this.onError), 1200);
-  }
-  async write() {
-    const ad = this.plugin.app.vault.adapter, path5 = `${SYNC_FOLDER}/${this.device}.json`, text = JSON.stringify({ version: 1, device: this.device, records: this.records }, null, 2);
-    if (!await ad.exists(path5) || await ad.read(path5) !== text) await ad.write(path5, text);
-  }
-  refresh() {
-    const run = async () => {
-      var _a2, _b;
-      if (!this.ready) return;
-      this.observe();
-      const docs = await this.readDocuments();
-      this.observe();
-      Object.assign(this.records, this.pending);
-      this.pending = {};
-      const all = mergeRecords([...docs, { version: 1, records: this.records }]);
-      this.clock = Math.max(this.clock, ...Object.values(all).map((r) => r.time));
-      const old = snapshot(this.plugin);
-      for (const [k, r] of Object.entries(all)) if (JSON.parse(k)[0] === "progress" && r.device !== this.device && !r.deleted && !equal(old[k], r.value)) this.remotePositions.add(JSON.parse(k)[1]);
-      applyRecords(this.plugin, all);
-      this.baseline = snapshot(this.plugin);
-      await this.write();
-      this.status = (/* @__PURE__ */ new Date()).toISOString();
-      if (!equal(old, this.baseline)) {
-        await this.plugin._saveLocalData();
-        for (const leaf of this.plugin.app.workspace.getLeavesOfType("book-reader-tts-library")) (_b = (_a2 = leaf.view)._refresh) == null ? void 0 : _b.call(_a2);
-      }
-      return { devices: new Set(docs.map((d) => d.device).filter(Boolean)).size, time: this.status };
-    };
-    const result = this.chain.then(run);
-    this.chain = result.catch(() => {
-    });
-    return result;
-  }
-  dispose() {
-    clearTimeout(this.timer);
-    this.ready = false;
-  }
-};
-
 // src/locales/zh.json
 var zh_default = {
   Yellow: "\u9EC4\u8272",
@@ -14560,7 +14369,35 @@ var zh_default = {
   "Voice test failed: {0}": "\u58F0\u97F3\u6D4B\u8BD5\u5931\u8D25\uFF1A{0}",
   "Voice test finished": "\u58F0\u97F3\u6D4B\u8BD5\u5DF2\u7ED3\u675F",
   "Voice test requested; confirm whether you hear audio": "\u5DF2\u8BF7\u6C42\u64AD\u653E\uFF0C\u8BF7\u786E\u8BA4\u662F\u5426\u542C\u5230\u58F0\u97F3",
-  "Test system default voice (Chinese)": "\u8BD5\u542C\u7CFB\u7EDF\u9ED8\u8BA4\u58F0\u97F3\uFF08\u4E2D\u6587\uFF09"
+  "Test system default voice (Chinese)": "\u8BD5\u542C\u7CFB\u7EDF\u9ED8\u8BA4\u58F0\u97F3\uFF08\u4E2D\u6587\uFF09",
+  Collections: "\u85CF\u4E66",
+  Edit: "\u7F16\u8F91",
+  "New collection": "\u65B0\u5EFA\u85CF\u4E66",
+  Add: "\u6DFB\u52A0",
+  Saved: "\u5DF2\u4FDD\u5B58",
+  "Show collection": "\u663E\u793A",
+  "Hide collection": "\u9690\u85CF",
+  "Collection name": "\u85CF\u4E66\u540D\u79F0",
+  "Move up": "\u4E0A\u79FB",
+  "Move down": "\u4E0B\u79FB",
+  "Collection name is required": "\u8BF7\u8F93\u5165\u85CF\u4E66\u540D\u79F0",
+  "A collection with this name already exists": "\u5DF2\u5B58\u5728\u540C\u540D\u85CF\u4E66",
+  "Enter one collection name": "\u8BF7\u8F93\u5165\u4E00\u4E2A\u85CF\u4E66\u540D\u79F0\uFF0C\u4E0D\u542B\u5206\u9694\u7B26",
+  Books: "\u56FE\u4E66",
+  "Today {0} \xB7 Total {1}": "\u4ECA\u65E5\u9605\u8BFB {0} \xB7 \u7D2F\u8BA1 {1}",
+  "Read {0}": "\u5DF2\u8BFB {0}",
+  "Reading insights": "\u9605\u8BFB\u6D1E\u5BDF",
+  "Recorded on this device. Per-book history starts with this update. Foreground time is an estimate, not proof of attentive reading.": "\u7EDF\u8BA1\u6765\u81EA\u672C\u8BBE\u5907\u3002\u6BCF\u672C\u4E66\u7684\u65F6\u957F\u4ECE\u672C\u6B21\u66F4\u65B0\u5F00\u59CB\u8BB0\u5F55\uFF1B\u524D\u53F0\u505C\u7559\u65F6\u95F4\u4E0D\u7B49\u4E8E\u5B9E\u9645\u4E13\u6CE8\u9605\u8BFB\u65F6\u95F4\u3002",
+  Today: "\u4ECA\u65E5",
+  "Last 7 days": "\u8FD1 7 \u5929",
+  "Total reading": "\u7D2F\u8BA1\u9605\u8BFB",
+  "Reading streak": "\u8FDE\u7EED\u9605\u8BFB",
+  "{0} days": "{0} \u5929",
+  "{0}% compared with the previous 7 days": "\u8F83\u524D 7 \u5929 {0}%",
+  "Not enough previous-week data for a comparison": "\u6682\u65E0\u8DB3\u591F\u7684\u524D\u4E00\u5468\u6570\u636E\u53EF\u4F9B\u6BD4\u8F83",
+  "Read on {0} of the last 7 days": "\u8FD1 7 \u5929\u4E2D\uFF0C\u6709 {0} \u5929\u8FDB\u884C\u4E86\u9605\u8BFB",
+  "Most-read books by time": "\u9605\u8BFB\u65F6\u957F\u6700\u591A\u7684\u4E66",
+  "Open a book to start recording per-book reading time": "\u6253\u5F00\u4E00\u672C\u4E66\uFF0C\u5373\u53EF\u5F00\u59CB\u8BB0\u5F55\u6BCF\u672C\u4E66\u7684\u9605\u8BFB\u65F6\u957F"
 };
 
 // src/i18n.js
@@ -14597,6 +14434,502 @@ function t(key2, ...args) {
   const text = uiLanguage() === "zh" && Object.hasOwn(zh_default, key2) ? zh_default[key2] : key2;
   return String(text).replace(/\{(\d+)\}/g, (match, index) => args[Number(index)] == null ? match : String(args[Number(index)]));
 }
+
+// src/library-core.js
+function parseTags(value) {
+  return [...new Set(String(value || "").split(/[,，;；、\n]+/u).map((s) => s.trim().replace(/^#+/u, "")).filter(Boolean))];
+}
+function tagsFor(settings, path5) {
+  var _a2;
+  return parseTags((((_a2 = settings.bookTags) == null ? void 0 : _a2[path5]) || []).join(","));
+}
+function libraryTags(settings) {
+  return [...new Set([...settings.libraryTagNames || [], ...Object.values(settings.bookTags || {}).flat()].filter((s) => typeof s === "string" && s.trim()))];
+}
+function setArchived(settings, paths, archived) {
+  var _a2;
+  (_a2 = settings.bookArchives) != null ? _a2 : settings.bookArchives = {};
+  for (const path5 of paths) {
+    if (archived) settings.bookArchives[path5] = true;
+    else delete settings.bookArchives[path5];
+  }
+}
+function visibleBooks(files, settings, archive = false) {
+  return files.filter((f) => {
+    var _a2;
+    return Boolean((_a2 = settings.bookArchives) == null ? void 0 : _a2[f.path]) === archive;
+  });
+}
+function editTags(settings, paths, tags, append = false) {
+  var _a2;
+  (_a2 = settings.bookTags) != null ? _a2 : settings.bookTags = {};
+  for (const path5 of paths) settings.bookTags[path5] = parseTags([...append ? tagsFor(settings, path5) : [], ...tags].join(","));
+  settings.libraryTagNames = [.../* @__PURE__ */ new Set([...libraryTags(settings), ...tags])];
+}
+function renameTag(settings, oldName, newName) {
+  const parsed = parseTags(newName), name = parsed[0];
+  if (!name || parsed.length !== 1 || /[,，;；、\n]/u.test(newName)) throw Error("Tag names cannot be empty or contain separators.");
+  settings.libraryTagNames = [...new Set(libraryTags(settings).map((t2) => t2 === oldName ? name : t2))];
+  for (const [path5, tags] of Object.entries(settings.bookTags || {})) settings.bookTags[path5] = [...new Set(tags.map((t2) => t2 === oldName ? name : t2))];
+  if (settings.libCategory === "tag:" + oldName) settings.libCategory = "tag:" + name;
+}
+function removeTag(settings, name) {
+  settings.libraryTagNames = libraryTags(settings).filter((t2) => t2 !== name);
+  for (const [path5, tags] of Object.entries(settings.bookTags || {})) settings.bookTags[path5] = tags.filter((t2) => t2 !== name);
+  if (settings.libCategory === "tag:" + name) settings.libCategory = "all";
+}
+function moveLibraryMetadata(settings, oldPath, newPath) {
+  for (const key2 of ["bookArchives", "bookTags", "bookNoteLinks", "bookNotePrompted", "bookTemplates", "coverFits", "bookReadingSeconds"]) {
+    const map = settings[key2];
+    if (map && Object.hasOwn(map, oldPath)) {
+      map[newPath] = map[oldPath];
+      delete map[oldPath];
+    }
+  }
+}
+function sortLibrary(files, mode, getProgress, locale) {
+  return [...files].sort((a, b) => {
+    var _a2, _b, _c, _d, _e, _f;
+    const title = () => a.basename.localeCompare(b.basename, locale, { numeric: true, sensitivity: "base" });
+    if (mode === "title") return title();
+    if (mode === "added") return (((_a2 = b.stat) == null ? void 0 : _a2.ctime) || 0) - (((_b = a.stat) == null ? void 0 : _b.ctime) || 0) || title();
+    if (mode === "progress") return (((_c = getProgress(b.path)) == null ? void 0 : _c.percent) || 0) - (((_d = getProgress(a.path)) == null ? void 0 : _d.percent) || 0) || title();
+    return (((_e = getProgress(b.path)) == null ? void 0 : _e.lastRead) || 0) - (((_f = getProgress(a.path)) == null ? void 0 : _f.lastRead) || 0) || title();
+  });
+}
+
+// src/reader-popover.js
+function mountReaderPopover(details, content, title) {
+  const doc = details.ownerDocument, win = doc.defaultView, summary = details.querySelector("summary");
+  content.classList.add("br-reader-popover");
+  content.setAttribute("role", "region");
+  content.setAttribute("aria-label", title);
+  const close = doc.createElement("button");
+  close.type = "button";
+  close.className = "br-popover-close";
+  close.textContent = t("Close");
+  close.setAttribute("aria-label", t("Close {0}", title));
+  content.prepend(close);
+  const hide = () => {
+    details.open = false;
+    summary.focus();
+  };
+  close.addEventListener("click", hide);
+  const place = () => {
+  };
+  const toggle = () => {
+    summary.setAttribute("aria-expanded", String(details.open));
+    if (details.open) {
+      for (const other of doc.querySelectorAll(".br-reader-settings[open]")) if (other !== details) other.open = false;
+      place();
+    }
+  };
+  const outside = (e) => {
+    if (details.open && !details.contains(e.target)) details.open = false;
+  };
+  const key2 = (e) => {
+    if (details.open && e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      hide();
+    }
+  };
+  details.classList.add("br-reader-settings");
+  summary.setAttribute("aria-expanded", "false");
+  details.addEventListener("toggle", toggle);
+  doc.addEventListener("pointerdown", outside);
+  doc.addEventListener("keydown", key2, true);
+  win.addEventListener("resize", place);
+  return () => {
+    details.removeEventListener("toggle", toggle);
+    doc.removeEventListener("pointerdown", outside);
+    doc.removeEventListener("keydown", key2, true);
+    win.removeEventListener("resize", place);
+  };
+}
+
+// src/collections.js
+function orderedCollections(items, settings, includeHidden = false) {
+  const order = settings.libraryCollectionOrder || [], hidden = new Set(settings.libraryHiddenCollections || []);
+  return items.filter((x) => includeHidden || x.id === "all" || !hidden.has(x.id)).map((item, index) => ({ item, index })).sort((a, b) => {
+    const rank = (x) => order.includes(x.item.id) ? order.indexOf(x.item.id) : order.length + x.index;
+    return rank(a) - rank(b);
+  }).map((x) => x.item);
+}
+function mountCollections(doc, host, { settings, getItems, save, pick, customize, onError = () => {
+}, onClose = () => {
+} }) {
+  const details = doc.createElement("details");
+  details.className = "br-collections";
+  const summary = doc.createElement("summary");
+  summary.textContent = t("Collections");
+  details.append(summary);
+  const panel = doc.createElement("div");
+  panel.className = "br-collections-panel";
+  details.append(panel);
+  host.append(details);
+  const dispose = mountReaderPopover(details, panel, t("Collections"));
+  const head = doc.createElement("div");
+  head.className = "br-collections-heading";
+  panel.append(head);
+  const title = doc.createElement("strong");
+  title.textContent = t("Collections");
+  head.append(title);
+  const edit = doc.createElement("button");
+  edit.type = "button";
+  head.append(edit);
+  const list = doc.createElement("div");
+  list.className = "br-collections-list";
+  panel.append(list);
+  const message = doc.createElement("p");
+  message.className = "br-collection-message";
+  message.setAttribute("role", "status");
+  panel.append(message);
+  const form = doc.createElement("form");
+  form.className = "br-collection-new";
+  panel.append(form);
+  const input = doc.createElement("input");
+  input.placeholder = t("New collection");
+  input.setAttribute("aria-label", t("New collection"));
+  form.append(input);
+  const add = doc.createElement("button");
+  add.type = "submit";
+  add.textContent = t("Add");
+  form.append(add);
+  const appearance = doc.createElement("button");
+  appearance.type = "button";
+  appearance.textContent = t("Customize bookshelf");
+  appearance.onclick = () => {
+    details.open = false;
+    customize();
+  };
+  panel.append(appearance);
+  let editing = false, busy = false, dirty = false;
+  const closed = () => {
+    if (!details.open && dirty) {
+      dirty = false;
+      onClose();
+    }
+  };
+  details.addEventListener("toggle", closed);
+  const run = async (mutate) => {
+    if (busy) return;
+    busy = true;
+    panel.setAttribute("aria-busy", "true");
+    const before = JSON.parse(JSON.stringify(settings));
+    try {
+      mutate();
+      await save();
+      dirty = true;
+      message.textContent = t("Saved");
+    } catch (e) {
+      for (const k of Object.keys(settings)) delete settings[k];
+      Object.assign(settings, before);
+      message.textContent = t("Error: {0}", e.message);
+      onError(e);
+    } finally {
+      busy = false;
+      panel.removeAttribute("aria-busy");
+      draw();
+    }
+  };
+  const button = (row, label, action) => {
+    const b = doc.createElement("button");
+    b.type = "button";
+    b.textContent = label;
+    b.onclick = action;
+    row.append(b);
+    return b;
+  };
+  const draw = () => {
+    edit.textContent = t(editing ? "Done" : "Edit");
+    edit.setAttribute("aria-pressed", String(editing));
+    list.replaceChildren();
+    const items = orderedCollections(getItems(), settings, editing);
+    items.forEach((item, index) => {
+      var _a2;
+      const row = doc.createElement("div");
+      row.className = "br-collection-row";
+      list.append(row);
+      const hidden = (settings.libraryHiddenCollections || []).includes(item.id);
+      row.classList.toggle("is-hidden-collection", hidden);
+      if (editing) {
+        const hide = button(row, t(hidden ? "Show collection" : "Hide collection"), () => run(() => {
+          const set = new Set(settings.libraryHiddenCollections || []);
+          hidden ? set.delete(item.id) : set.add(item.id);
+          settings.libraryHiddenCollections = [...set];
+          if (settings.libCategory === item.id && !hidden) settings.libCategory = "all";
+        }));
+        hide.className = "br-collection-visibility";
+        hide.disabled = item.id === "all";
+        const name = doc.createElement("input");
+        name.value = item.label;
+        name.setAttribute("aria-label", t("Collection name"));
+        row.append(name);
+        button(row, t("Rename"), () => run(() => {
+          var _a3;
+          const value = name.value.trim();
+          if (!value) throw Error(t("Collection name is required"));
+          if (item.id.startsWith("tag:")) {
+            const old = item.id.slice(4);
+            if (value !== old && libraryTags(settings).includes(value)) throw Error(t("A collection with this name already exists"));
+            renameTag(settings, old, value);
+            for (const key2 of ["libraryCollectionOrder", "libraryHiddenCollections"]) settings[key2] = (settings[key2] || []).map((id) => id === item.id ? "tag:" + value : id);
+          } else {
+            (_a3 = settings.libraryLabels) != null ? _a3 : settings.libraryLabels = {};
+            settings.libraryLabels[item.id] = value;
+          }
+        }));
+        for (const [offset, label] of [[-1, "Move up"], [1, "Move down"]]) {
+          const move = button(row, t(label), () => run(() => {
+            const ids = items.map((x) => x.id);
+            [ids[index], ids[index + offset]] = [ids[index + offset], ids[index]];
+            settings.libraryCollectionOrder = ids;
+          }));
+          move.disabled = index + offset < 0 || index + offset >= items.length;
+        }
+      } else {
+        const choose = button(row, item.label, () => {
+          details.open = false;
+          pick(item.id);
+        });
+        choose.className = "br-collection-pick";
+        choose.setAttribute("aria-current", String(settings.libCategory === item.id));
+        const count = doc.createElement("span");
+        count.textContent = String((_a2 = item.count) != null ? _a2 : 0);
+        row.append(count);
+        const chevron = doc.createElement("span");
+        chevron.textContent = "\u203A";
+        chevron.setAttribute("aria-hidden", "true");
+        row.append(chevron);
+      }
+    });
+  };
+  edit.onclick = () => {
+    editing = !editing;
+    draw();
+  };
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    run(() => {
+      const names = parseTags(input.value);
+      if (names.length !== 1) throw Error(t("Enter one collection name"));
+      if (libraryTags(settings).includes(names[0])) throw Error(t("A collection with this name already exists"));
+      settings.libraryTagNames = [...libraryTags(settings), names[0]];
+      input.value = "";
+    });
+  };
+  draw();
+  return () => {
+    details.removeEventListener("toggle", closed);
+    dispose();
+    details.remove();
+  };
+}
+
+// src/reading-time.js
+function readingTick(previous, now, active) {
+  const elapsed = (now - previous) / 1e3;
+  return active && elapsed > 0 && elapsed <= 2.5 ? elapsed : 0;
+}
+function readingViewActive(view) {
+  var _a2, _b;
+  const root = view.contentEl || view.containerEl, doc = root == null ? void 0 : root.ownerDocument;
+  if (!view.file || !(root == null ? void 0 : root.isConnected) || (doc == null ? void 0 : doc.visibilityState) !== "visible") return false;
+  if (view.leaf && ((_b = (_a2 = view.app) == null ? void 0 : _a2.workspace) == null ? void 0 : _b.activeLeaf) !== view.leaf) return false;
+  return root.getClientRects().length > 0;
+}
+
+// src/reader-sync-ui.js
+var import_obsidian = require("obsidian");
+
+// src/reader-sync.js
+var SYNC_FOLDER = "Book Reader Sync";
+var maps = ["bookArchives", "bookNoteLinks", "bookTemplates"];
+var shelf = ["libraryTitle", "librarySubtitle", "libraryLabels", "libraryTagNames"];
+var preferences = ["fontSize", "fontFamily", "lineHeight", "theme", "textAlign", "sharedSpeechRate"];
+var clone = (value) => JSON.parse(JSON.stringify(value));
+var equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+var key = (...parts) => JSON.stringify(parts);
+function snapshot(plugin) {
+  const out = {};
+  const s = plugin.settings;
+  for (const name of maps) for (const [path5, value] of Object.entries(s[name] || {})) out[key("map", name, path5)] = value;
+  for (const [path5, tags] of Object.entries(s.bookTags || {})) for (const tag of tags) out[key("tag", path5, tag)] = true;
+  for (const name of shelf) if (s[name] !== void 0) out[key("shelf", name)] = s[name];
+  if (s.readerSyncPreferences) {
+    for (const name of preferences) if (s[name] !== void 0) out[key("pref", name)] = s[name];
+  }
+  for (const [path5, value] of Object.entries(plugin.progress || {})) out[key("progress", path5)] = value;
+  for (const [path5, list] of Object.entries(plugin.highlights || {})) for (const value of list) if (value.id != null) out[key("highlight", path5, String(value.id))] = value;
+  return clone(out);
+}
+function mergeRecords(documents) {
+  const records = {};
+  for (const doc of documents) {
+    if ((doc == null ? void 0 : doc.version) !== 1 || !doc.records || typeof doc.records !== "object" || Array.isArray(doc.records)) throw Error("Unsupported or damaged reader sync file");
+    for (const [k, r] of Object.entries(doc.records)) {
+      const parts = JSON.parse(k);
+      if (!Array.isArray(parts) || parts.some((p) => typeof p !== "string" || ["__proto__", "constructor", "prototype"].includes(p)) || !r || !Number.isFinite(r.time) || typeof r.device !== "string" || !r.deleted && !Object.hasOwn(r, "value")) throw Error("Unsupported or damaged reader sync file");
+      const [type2, a] = parts, v = r.value;
+      const allowed = type2 === "map" && maps.includes(a) && parts.length === 3 || type2 === "tag" && parts.length === 3 || type2 === "shelf" && shelf.includes(a) && parts.length === 2 || type2 === "pref" && preferences.includes(a) && parts.length === 2 || type2 === "progress" && parts.length === 2 || type2 === "highlight" && parts.length === 3;
+      if (!allowed) throw Error("Unsupported or damaged reader sync file");
+      if (!r.deleted) {
+        const object = v && typeof v === "object" && !Array.isArray(v);
+        if (type2 === "progress" && (!object || !Number.isFinite(v.pct) || v.pct < 0 || v.pct > 1) || type2 === "highlight" && (!object || v.id == null || String(v.id) !== parts[2]) || type2 === "tag" && v !== true || type2 === "map" && (a === "bookArchives" ? typeof v !== "boolean" : typeof v !== "string") || type2 === "shelf" && (a === "libraryTagNames" ? !Array.isArray(v) || v.some((t2) => typeof t2 !== "string") : a === "libraryLabels" ? !object : typeof v !== "string") || type2 === "pref" && !["number", "string"].includes(typeof v)) throw Error("Unsupported or damaged reader sync file");
+      }
+      const prev = records[k];
+      if (!prev || r.time > prev.time || r.time === prev.time && r.device > prev.device) records[k] = clone(r);
+    }
+  }
+  return records;
+}
+function captureChanges(records, before, after, device, time) {
+  for (const k of /* @__PURE__ */ new Set([...Object.keys(before), ...Object.keys(after)])) {
+    if (equal(before[k], after[k])) continue;
+    records[k] = Object.hasOwn(after, k) ? { time, device, value: clone(after[k]) } : { time, device, deleted: true };
+  }
+}
+function applyRecords(plugin, records) {
+  var _a2, _b, _c;
+  const s = plugin.settings;
+  for (const [k, r] of Object.entries(records)) {
+    const [type2, a, b] = JSON.parse(k), value = r.deleted ? void 0 : clone(r.value);
+    if (type2 === "map" && maps.includes(a)) {
+      (_a2 = s[a]) != null ? _a2 : s[a] = {};
+      if (r.deleted) delete s[a][b];
+      else s[a][b] = value;
+    }
+    if (type2 === "tag") {
+      (_b = s.bookTags) != null ? _b : s.bookTags = {};
+      const tags = new Set(s.bookTags[a] || []);
+      r.deleted ? tags.delete(b) : tags.add(b);
+      s.bookTags[a] = [...tags].sort();
+    }
+    if (type2 === "shelf" && shelf.includes(a)) {
+      if (r.deleted) delete s[a];
+      else s[a] = value;
+    }
+    if (type2 === "pref" && s.readerSyncPreferences && preferences.includes(a)) {
+      if (!r.deleted) s[a] = value;
+    }
+    if (type2 === "progress") {
+      if (!equal(plugin.progress[a], value)) (_c = plugin._recordBackup) == null ? void 0 : _c.call(plugin, a, plugin.progress[a], Date.now());
+      if (r.deleted) delete plugin.progress[a];
+      else plugin.progress[a] = value;
+    }
+    if (type2 === "highlight") {
+      const list = plugin.highlights[a] || [];
+      plugin.highlights[a] = list.filter((h) => String(h.id) !== b);
+      if (!r.deleted) plugin.highlights[a].push(value);
+    }
+  }
+}
+var ReaderSync = class {
+  constructor(plugin, device, onError = () => {
+  }, storage = null) {
+    this.plugin = plugin;
+    this.device = device;
+    this.onError = onError;
+    this.storage = storage;
+    this.cacheKey = `reader-sync-pending:${device}`;
+    this.records = {};
+    this.baseline = {};
+    this.pending = {};
+    this.chain = Promise.resolve();
+    this.ready = false;
+    this.clock = 0;
+    this.status = "";
+  }
+  async initialize() {
+    var _a2;
+    const ad = this.plugin.app.vault.adapter;
+    if (!await ad.exists(SYNC_FOLDER)) await this.plugin.app.vault.createFolder(SYNC_FOLDER);
+    const docs = await this.readDocuments();
+    const merged = mergeRecords(docs);
+    this.clock = Math.max(0, ...Object.values(merged).map((r) => r.time));
+    const current = snapshot(this.plugin);
+    for (const k of Object.keys(merged)) delete current[k];
+    captureChanges(this.records, {}, current, this.device, 1);
+    const cached = (_a2 = this.storage) == null ? void 0 : _a2.getItem(this.cacheKey);
+    this.records = mergeRecords([{ version: 1, records: this.records }, ...docs.filter((d) => d.device === this.device), ...cached ? [JSON.parse(cached)] : []]);
+    const all = mergeRecords([{ version: 1, records: this.records }, ...docs]);
+    this.clock = Math.max(this.clock, ...Object.values(all).map((r) => r.time));
+    this.remotePositions = new Set(Object.entries(all).filter(([k, r]) => JSON.parse(k)[0] === "progress" && r.device !== this.device && !r.deleted).map(([k]) => JSON.parse(k)[1]));
+    applyRecords(this.plugin, all);
+    this.baseline = snapshot(this.plugin);
+    this.ready = true;
+    await this.write();
+    await this.plugin._saveLocalData();
+  }
+  async readDocuments() {
+    const ad = this.plugin.app.vault.adapter, listing = await ad.list(SYNC_FOLDER), docs = [];
+    for (const path5 of listing.files.filter((p) => p.endsWith(".json"))) {
+      const doc = JSON.parse(await ad.read(path5));
+      mergeRecords([doc]);
+      docs.push(doc);
+    }
+    return docs;
+  }
+  observe() {
+    var _a2;
+    if (!this.ready) return;
+    const current = snapshot(this.plugin);
+    if (!this.plugin.settings.readerSyncPreferences) {
+      for (const k of Object.keys(this.baseline)) if (JSON.parse(k)[0] === "pref") delete this.baseline[k];
+    }
+    this.clock = Math.max(Date.now(), this.clock + 1);
+    captureChanges(this.pending, this.baseline, current, this.device, this.clock);
+    try {
+      (_a2 = this.storage) == null ? void 0 : _a2.setItem(this.cacheKey, JSON.stringify({ version: 1, records: { ...this.records, ...this.pending } }));
+    } catch (e) {
+      this.onError(e);
+    }
+    this.baseline = current;
+  }
+  schedule() {
+    if (!this.ready) return;
+    this.observe();
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.refresh().catch(this.onError), 1200);
+  }
+  async write() {
+    const ad = this.plugin.app.vault.adapter, path5 = `${SYNC_FOLDER}/${this.device}.json`, text = JSON.stringify({ version: 1, device: this.device, records: this.records }, null, 2);
+    if (!await ad.exists(path5) || await ad.read(path5) !== text) await ad.write(path5, text);
+  }
+  refresh() {
+    const run = async () => {
+      var _a2, _b;
+      if (!this.ready) return;
+      this.observe();
+      const docs = await this.readDocuments();
+      this.observe();
+      Object.assign(this.records, this.pending);
+      this.pending = {};
+      const all = mergeRecords([...docs, { version: 1, records: this.records }]);
+      this.clock = Math.max(this.clock, ...Object.values(all).map((r) => r.time));
+      const old = snapshot(this.plugin);
+      for (const [k, r] of Object.entries(all)) if (JSON.parse(k)[0] === "progress" && r.device !== this.device && !r.deleted && !equal(old[k], r.value)) this.remotePositions.add(JSON.parse(k)[1]);
+      applyRecords(this.plugin, all);
+      this.baseline = snapshot(this.plugin);
+      await this.write();
+      this.status = (/* @__PURE__ */ new Date()).toISOString();
+      if (!equal(old, this.baseline)) {
+        await this.plugin._saveLocalData();
+        for (const leaf of this.plugin.app.workspace.getLeavesOfType("book-reader-tts-library")) (_b = (_a2 = leaf.view)._refresh) == null ? void 0 : _b.call(_a2);
+      }
+      return { devices: new Set(docs.map((d) => d.device).filter(Boolean)).size, time: this.status };
+    };
+    const result = this.chain.then(run);
+    this.chain = result.catch(() => {
+    });
+    return result;
+  }
+  dispose() {
+    clearTimeout(this.timer);
+    this.ready = false;
+  }
+};
 
 // src/reader-sync-ui.js
 async function installReaderSync(plugin) {
@@ -14652,74 +14985,205 @@ function mountSyncSettings(container, plugin) {
   }));
 }
 
-// src/library-core.js
-function parseTags(value) {
-  return [...new Set(String(value || "").split(/[,，;；、\n]+/u).map((s) => s.trim().replace(/^#+/u, "")).filter(Boolean))];
+// src/library-settings.js
+var import_obsidian2 = require("obsidian");
+
+// src/reading-insights.js
+function localDay(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
-function tagsFor(settings, path5) {
-  var _a2;
-  return parseTags((((_a2 = settings.bookTags) == null ? void 0 : _a2[path5]) || []).join(","));
+function readingInsights(settings, now = /* @__PURE__ */ new Date()) {
+  const log = settings.readingLog || {};
+  const seconds = (x) => Number.isFinite(x) && x > 0 ? x : 0;
+  const day = (offset2) => {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset2);
+    return localDay(d);
+  };
+  const days = Array.from({ length: 7 }, (_, i) => ({ date: day(i - 6), seconds: seconds(log[day(i - 6)]) }));
+  const week = days.reduce((sum, x) => sum + x.seconds, 0), previous = Array.from({ length: 7 }, (_, i) => seconds(log[day(i - 13)])).reduce((a, b) => a + b, 0);
+  let streak = 0, offset = seconds(log[day(0)]) ? 0 : -1;
+  while (streak < 4e3 && seconds(log[day(offset - streak)])) streak++;
+  const ranked = Object.entries(settings.bookReadingSeconds || {}).filter(([, s]) => seconds(s) > 0).map(([path5, s]) => ({ path: path5, seconds: s })).sort((a, b) => b.seconds - a.seconds || a.path.localeCompare(b.path));
+  return { days, week, previous, today: seconds(log[day(0)]), streak, activeDays: days.filter((x) => x.seconds > 0).length, total: Math.max(seconds(settings.lifetimeSeconds), Object.values(log).reduce((a, b) => a + seconds(b), 0)), ranked };
 }
-function libraryTags(settings) {
-  return [...new Set([...settings.libraryTagNames || [], ...Object.values(settings.bookTags || {}).flat()].filter((s) => typeof s === "string" && s.trim()))];
+
+// src/reading-progress.js
+function estimateReadingSeconds(text) {
+  const cjk = (String(text).match(/[\u3040-\u30ff\u3400-\u9fff]/g) || []).length;
+  const words = (String(text).match(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g) || []).length;
+  return cjk / 300 * 60 + words / 220 * 60;
 }
-function setArchived(settings, paths, archived) {
-  var _a2;
-  (_a2 = settings.bookArchives) != null ? _a2 : settings.bookArchives = {};
-  for (const path5 of paths) {
-    if (archived) settings.bookArchives[path5] = true;
-    else delete settings.bookArchives[path5];
-  }
+function formatReadingTime(seconds) {
+  const minutes = Math.ceil(Math.max(0, seconds) / 60);
+  return minutes >= 60 ? t("{0} h {1} min", Math.floor(minutes / 60), minutes % 60) : t("{0} min", minutes);
 }
-function visibleBooks(files, settings, archive = false) {
-  return files.filter((f) => {
-    var _a2;
-    return Boolean((_a2 = settings.bookArchives) == null ? void 0 : _a2[f.path]) === archive;
-  });
-}
-function editTags(settings, paths, tags, append = false) {
-  var _a2;
-  (_a2 = settings.bookTags) != null ? _a2 : settings.bookTags = {};
-  for (const path5 of paths) settings.bookTags[path5] = parseTags([...append ? tagsFor(settings, path5) : [], ...tags].join(","));
-  settings.libraryTagNames = [.../* @__PURE__ */ new Set([...libraryTags(settings), ...tags])];
-}
-function renameTag(settings, oldName, newName) {
-  const parsed = parseTags(newName), name = parsed[0];
-  if (!name || parsed.length !== 1 || /[,，;；、\n]/u.test(newName)) throw Error("Tag names cannot be empty or contain separators.");
-  settings.libraryTagNames = [...new Set(libraryTags(settings).map((t2) => t2 === oldName ? name : t2))];
-  for (const [path5, tags] of Object.entries(settings.bookTags || {})) settings.bookTags[path5] = [...new Set(tags.map((t2) => t2 === oldName ? name : t2))];
-  if (settings.libCategory === "tag:" + oldName) settings.libCategory = "tag:" + name;
-}
-function removeTag(settings, name) {
-  settings.libraryTagNames = libraryTags(settings).filter((t2) => t2 !== name);
-  for (const [path5, tags] of Object.entries(settings.bookTags || {})) settings.bookTags[path5] = tags.filter((t2) => t2 !== name);
-  if (settings.libCategory === "tag:" + name) settings.libCategory = "all";
-}
-function moveLibraryMetadata(settings, oldPath, newPath) {
-  for (const key2 of ["bookArchives", "bookTags", "bookNoteLinks", "bookNotePrompted", "bookTemplates", "coverFits"]) {
-    const map = settings[key2];
-    if (map && Object.hasOwn(map, oldPath)) {
-      map[newPath] = map[oldPath];
-      delete map[oldPath];
-    }
-  }
-}
-function sortLibrary(files, mode, getProgress, locale) {
-  return [...files].sort((a, b) => {
+function mountReadingProgress(view, host, toggleTimer = () => {
+}) {
+  const doc = host.ownerDocument;
+  const wrap = doc.createElement("div");
+  wrap.className = "br-progress";
+  const meta = doc.createElement("div");
+  meta.className = "br-progress-meta";
+  const chapter = doc.createElement("span");
+  chapter.className = "br-progress-chapter";
+  const position = doc.createElement("output");
+  position.className = "br-progress-position";
+  meta.append(chapter, position);
+  const slider = doc.createElement("input");
+  slider.type = "range";
+  slider.min = "0";
+  slider.max = "1000";
+  slider.step = "1";
+  slider.value = "0";
+  slider.disabled = true;
+  slider.setAttribute("aria-label", t("Reading progress"));
+  const back = doc.createElement("button");
+  back.textContent = t("Return to previous position");
+  back.type = "button";
+  back.className = "br-progress-back";
+  back.hidden = true;
+  const stats = doc.createElement("div");
+  stats.className = "br-progress-stats";
+  const timer = doc.createElement("button");
+  timer.type = "button";
+  timer.className = "br-session-time";
+  timer.addEventListener("click", toggleTimer);
+  const cumulativeLabel = doc.createElement("span");
+  cumulativeLabel.className = "br-cumulative-time";
+  stats.append(cumulativeLabel);
+  const remaining = doc.createElement("span");
+  remaining.title = t("Estimated from the current text block at 300 Chinese/Japanese characters or 220 English words per minute; actual reading time may vary.");
+  stats.append(timer, remaining);
+  wrap.append(meta, slider, stats, back);
+  host.classList.add("br-progress-host");
+  host.append(wrap);
+  let dragging = false, returnPosition = null, cachedFirst = null, cachedCount = -1, suffix = [];
+  const updateTime = () => {
+    var _a2, _b, _c, _d;
+    const seconds = Math.floor(view._sessionSec || 0);
+    timer.textContent = t("{0} Session {1}:{2}", view._running ? "\u2161" : "\u25B6", Math.floor(seconds / 60), String(seconds % 60).padStart(2, "0"));
+    timer.setAttribute("aria-label", view._running ? t("Pause reading timer") : t("Start reading timer"));
+    const cumulative = ((_d = (_b = (_a2 = view.plugin) == null ? void 0 : _a2.settings) == null ? void 0 : _b.bookReadingSeconds) == null ? void 0 : _d[(_c = view.file) == null ? void 0 : _c.path]) || 0;
+    cumulativeLabel.textContent = t("Read {0}", formatReadingTime(cumulative));
+  };
+  const update = (cur, total) => {
     var _a2, _b, _c, _d, _e, _f;
-    const title = () => a.basename.localeCompare(b.basename, locale, { numeric: true, sensitivity: "base" });
-    if (mode === "title") return title();
-    if (mode === "added") return (((_a2 = b.stat) == null ? void 0 : _a2.ctime) || 0) - (((_b = a.stat) == null ? void 0 : _b.ctime) || 0) || title();
-    if (mode === "progress") return (((_c = getProgress(b.path)) == null ? void 0 : _c.percent) || 0) - (((_d = getProgress(a.path)) == null ? void 0 : _d.percent) || 0) || title();
-    return (((_e = getProgress(b.path)) == null ? void 0 : _e.lastRead) || 0) - (((_f = getProgress(a.path)) == null ? void 0 : _f.lastRead) || 0) || title();
+    const max = Math.max(0, total - 1);
+    const percent = max ? Math.round(cur / max * 100) : total ? 100 : 0;
+    slider.disabled = !total;
+    if (!dragging) slider.value = String(max ? Math.round(cur / max * 1e3) : 0);
+    slider.style.setProperty("--br-fill", `${Number(slider.value) / 10}%`);
+    const currentBlock = ((_b = (_a2 = view.pager) == null ? void 0 : _a2.currentBlockIndex) == null ? void 0 : _b.call(_a2)) || 0;
+    const blocks = Array.from(((_d = (_c = view.pager) == null ? void 0 : _c._blocks) == null ? void 0 : _d.call(_c)) || []);
+    if (cachedFirst !== blocks[0] || cachedCount !== blocks.length) {
+      cachedFirst = blocks[0];
+      cachedCount = blocks.length;
+      suffix = new Array(blocks.length + 1).fill(0);
+      for (let i = blocks.length - 1; i >= 0; i--) suffix[i] = suffix[i + 1] + estimateReadingSeconds(blocks[i].textContent || "");
+    }
+    const estimate = suffix[currentBlock] || 0;
+    remaining.textContent = total ? t("{0} pages left \xB7 {1}", Math.max(0, total - cur - 1), estimate ? t("About ") + formatReadingTime(estimate) : t("Time unavailable")) : t("Pages depend on layout");
+    updateTime();
+    const toc = (view.tocItems || []).filter((item) => Number.isFinite(item.block) && item.block <= currentBlock).sort((a, b) => a.block - b.block);
+    chapter.textContent = ((_e = toc.at(-1)) == null ? void 0 : _e.label) || ((_f = view.file) == null ? void 0 : _f.basename) || t("Open a book to begin");
+    chapter.title = chapter.textContent;
+    if (!dragging) position.textContent = total ? `${cur + 1} / ${total} \xB7 ${percent}%` : "\u2014";
+    slider.setAttribute("aria-valuetext", total ? t("Page {0} of {1}, {2}%", cur + 1, total, percent) : t("Not loaded"));
+  };
+  const jump = (target) => {
+    var _a2;
+    (_a2 = view._tts) == null ? void 0 : _a2.stop();
+    const [cur, total] = view.pager.jumpTo(target);
+    (view.updateUI || view._updateUI).call(view, cur, total);
+    if (view.file) view.plugin.saveProgress(view.file.path, cur, total, view.pager.currentBlockIndex());
+  };
+  slider.addEventListener("input", () => {
+    var _a2;
+    dragging = true;
+    const total = ((_a2 = view.pager) == null ? void 0 : _a2.total) || 0;
+    const target = Math.round(Number(slider.value) / 1e3 * Math.max(0, total - 1));
+    position.textContent = t("Jump to {0} / {1} \xB7 {2}%", target + 1, total, Math.round(Number(slider.value) / 10));
+    slider.style.setProperty("--br-fill", `${Number(slider.value) / 10}%`);
   });
+  slider.addEventListener("change", () => {
+    var _a2;
+    dragging = false;
+    if (!((_a2 = view.pager) == null ? void 0 : _a2.total)) return;
+    returnPosition = { page: view.pager.spread, total: view.pager.total, block: view.pager.currentBlockIndex() };
+    back.hidden = false;
+    jump(Math.round(Number(slider.value) / 1e3 * Math.max(0, view.pager.total - 1)));
+  });
+  slider.addEventListener("blur", () => {
+    var _a2, _b;
+    dragging = false;
+    update(((_a2 = view.pager) == null ? void 0 : _a2.spread) || 0, ((_b = view.pager) == null ? void 0 : _b.total) || 0);
+  });
+  back.addEventListener("click", () => {
+    if (returnPosition === null) return;
+    jump(view.pager.total === returnPosition.total ? returnPosition.page : view.pager.spreadForBlock(returnPosition.block));
+    returnPosition = null;
+    back.hidden = true;
+  });
+  view._readingProgress = { update, updateTime, reset() {
+    returnPosition = null;
+    back.hidden = true;
+    dragging = false;
+    update(0, 0);
+  } };
+  update(0, 0);
+  return view._readingProgress;
 }
 
 // src/library-settings.js
-var import_obsidian2 = require("obsidian");
 function openShelfSettings(view) {
   new ShelfSettings(view).open();
 }
+function openReadingInsights(view) {
+  new ReadingInsights(view).open();
+}
+var ReadingInsights = class extends import_obsidian2.Modal {
+  constructor(view) {
+    super(view.app);
+    this.view = view;
+  }
+  onOpen() {
+    const c = this.contentEl;
+    c.addClass("br-insights");
+    const stats = readingInsights(this.view.plugin.settings);
+    c.createEl("h2", { text: t("Reading insights") });
+    c.createEl("p", { text: t("Recorded on this device. Per-book history starts with this update. Foreground time is an estimate, not proof of attentive reading.") });
+    const cards = c.createDiv("br-insight-cards");
+    for (const [label, value] of [[t("Today"), formatReadingTime(stats.today)], [t("Last 7 days"), formatReadingTime(stats.week)], [t("Total reading"), formatReadingTime(stats.total)], [t("Reading streak"), t("{0} days", stats.streak)]]) {
+      const card = cards.createDiv("br-insight-card");
+      card.createEl("small", { text: label });
+      card.createEl("strong", { text: value });
+    }
+    c.createEl("h3", { text: t("Last 7 days") });
+    const chart = c.createDiv("br-insight-chart");
+    const max = Math.max(1, ...stats.days.map((x) => x.seconds));
+    for (const d of stats.days) {
+      const column = chart.createDiv("br-insight-day");
+      column.setAttribute("aria-label", `${d.date}: ${formatReadingTime(d.seconds)}`);
+      column.createEl("small", { text: formatReadingTime(d.seconds) });
+      const track = column.createDiv("br-insight-track");
+      track.createDiv("br-insight-bar").style.height = `${d.seconds / max * 100}%`;
+      column.createEl("small", { text: d.date.slice(5) });
+    }
+    c.createEl("p", { text: stats.previous > 0 ? t("{0}% compared with the previous 7 days", `${stats.week >= stats.previous ? "+" : ""}${Math.round((stats.week - stats.previous) / stats.previous * 100)}`) : t("Not enough previous-week data for a comparison") });
+    c.createEl("p", { text: t("Read on {0} of the last 7 days", stats.activeDays) });
+    c.createEl("h3", { text: t("Most-read books by time") });
+    if (!stats.ranked.length) c.createEl("p", { text: t("Open a book to start recording per-book reading time") });
+    for (const book of stats.ranked.slice(0, 8)) {
+      const row = c.createDiv("br-insight-book");
+      const file = this.app.vault.getAbstractFileByPath(book.path);
+      row.createSpan({ text: (file == null ? void 0 : file.basename) || book.path.split("/").pop() });
+      row.createEl("strong", { text: formatReadingTime(book.seconds) });
+    }
+  }
+  onClose() {
+    this.contentEl.empty();
+  }
+};
 function openBookTags(view, paths, append = false) {
   new BookTags(view, paths, append).open();
 }
@@ -14852,127 +15316,6 @@ function bookNoteAction(settings = {}, path5) {
   if ((_a2 = settings.bookNoteLinks) == null ? void 0 : _a2[path5]) return "linked";
   if (settings.autoBookNote) return ((_b = settings.bookNotePrompted) == null ? void 0 : _b[path5]) ? "prompted" : "auto";
   return "quiet";
-}
-
-// src/reading-progress.js
-function estimateReadingSeconds(text) {
-  const cjk = (String(text).match(/[\u3040-\u30ff\u3400-\u9fff]/g) || []).length;
-  const words = (String(text).match(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g) || []).length;
-  return cjk / 300 * 60 + words / 220 * 60;
-}
-function formatReadingTime(seconds) {
-  const minutes = Math.ceil(Math.max(0, seconds) / 60);
-  return minutes >= 60 ? t("{0} h {1} min", Math.floor(minutes / 60), minutes % 60) : t("{0} min", minutes);
-}
-function mountReadingProgress(view, host, toggleTimer = () => {
-}) {
-  const doc = host.ownerDocument;
-  const wrap = doc.createElement("div");
-  wrap.className = "br-progress";
-  const meta = doc.createElement("div");
-  meta.className = "br-progress-meta";
-  const chapter = doc.createElement("span");
-  chapter.className = "br-progress-chapter";
-  const position = doc.createElement("output");
-  position.className = "br-progress-position";
-  meta.append(chapter, position);
-  const slider = doc.createElement("input");
-  slider.type = "range";
-  slider.min = "0";
-  slider.max = "1000";
-  slider.step = "1";
-  slider.value = "0";
-  slider.disabled = true;
-  slider.setAttribute("aria-label", t("Reading progress"));
-  const back = doc.createElement("button");
-  back.textContent = t("Return to previous position");
-  back.type = "button";
-  back.className = "br-progress-back";
-  back.hidden = true;
-  const stats = doc.createElement("div");
-  stats.className = "br-progress-stats";
-  const timer = doc.createElement("button");
-  timer.type = "button";
-  timer.className = "br-session-time";
-  timer.addEventListener("click", toggleTimer);
-  const remaining = doc.createElement("span");
-  remaining.title = t("Estimated from the current text block at 300 Chinese/Japanese characters or 220 English words per minute; actual reading time may vary.");
-  stats.append(timer, remaining);
-  wrap.append(meta, slider, stats, back);
-  host.classList.add("br-progress-host");
-  host.append(wrap);
-  let dragging = false, returnPosition = null, cachedFirst = null, cachedCount = -1, suffix = [];
-  const updateTime = () => {
-    const seconds = Math.floor(view._sessionSec || 0);
-    timer.textContent = t("{0} Session {1}:{2}", view._running ? "\u2161" : "\u25B6", Math.floor(seconds / 60), String(seconds % 60).padStart(2, "0"));
-    timer.setAttribute("aria-label", view._running ? t("Pause reading timer") : t("Start reading timer"));
-  };
-  const update = (cur, total) => {
-    var _a2, _b, _c, _d, _e, _f;
-    const max = Math.max(0, total - 1);
-    const percent = max ? Math.round(cur / max * 100) : total ? 100 : 0;
-    slider.disabled = !total;
-    if (!dragging) slider.value = String(max ? Math.round(cur / max * 1e3) : 0);
-    slider.style.setProperty("--br-fill", `${Number(slider.value) / 10}%`);
-    const currentBlock = ((_b = (_a2 = view.pager) == null ? void 0 : _a2.currentBlockIndex) == null ? void 0 : _b.call(_a2)) || 0;
-    const blocks = Array.from(((_d = (_c = view.pager) == null ? void 0 : _c._blocks) == null ? void 0 : _d.call(_c)) || []);
-    if (cachedFirst !== blocks[0] || cachedCount !== blocks.length) {
-      cachedFirst = blocks[0];
-      cachedCount = blocks.length;
-      suffix = new Array(blocks.length + 1).fill(0);
-      for (let i = blocks.length - 1; i >= 0; i--) suffix[i] = suffix[i + 1] + estimateReadingSeconds(blocks[i].textContent || "");
-    }
-    const estimate = suffix[currentBlock] || 0;
-    remaining.textContent = total ? t("{0} pages left \xB7 {1}", Math.max(0, total - cur - 1), estimate ? t("About ") + formatReadingTime(estimate) : t("Time unavailable")) : t("Pages depend on layout");
-    updateTime();
-    const toc = (view.tocItems || []).filter((item) => Number.isFinite(item.block) && item.block <= currentBlock).sort((a, b) => a.block - b.block);
-    chapter.textContent = ((_e = toc.at(-1)) == null ? void 0 : _e.label) || ((_f = view.file) == null ? void 0 : _f.basename) || t("Open a book to begin");
-    chapter.title = chapter.textContent;
-    if (!dragging) position.textContent = total ? `${cur + 1} / ${total} \xB7 ${percent}%` : "\u2014";
-    slider.setAttribute("aria-valuetext", total ? t("Page {0} of {1}, {2}%", cur + 1, total, percent) : t("Not loaded"));
-  };
-  const jump = (target) => {
-    var _a2;
-    (_a2 = view._tts) == null ? void 0 : _a2.stop();
-    const [cur, total] = view.pager.jumpTo(target);
-    (view.updateUI || view._updateUI).call(view, cur, total);
-    if (view.file) view.plugin.saveProgress(view.file.path, cur, total, view.pager.currentBlockIndex());
-  };
-  slider.addEventListener("input", () => {
-    var _a2;
-    dragging = true;
-    const total = ((_a2 = view.pager) == null ? void 0 : _a2.total) || 0;
-    const target = Math.round(Number(slider.value) / 1e3 * Math.max(0, total - 1));
-    position.textContent = t("Jump to {0} / {1} \xB7 {2}%", target + 1, total, Math.round(Number(slider.value) / 10));
-    slider.style.setProperty("--br-fill", `${Number(slider.value) / 10}%`);
-  });
-  slider.addEventListener("change", () => {
-    var _a2;
-    dragging = false;
-    if (!((_a2 = view.pager) == null ? void 0 : _a2.total)) return;
-    returnPosition = { page: view.pager.spread, total: view.pager.total, block: view.pager.currentBlockIndex() };
-    back.hidden = false;
-    jump(Math.round(Number(slider.value) / 1e3 * Math.max(0, view.pager.total - 1)));
-  });
-  slider.addEventListener("blur", () => {
-    var _a2, _b;
-    dragging = false;
-    update(((_a2 = view.pager) == null ? void 0 : _a2.spread) || 0, ((_b = view.pager) == null ? void 0 : _b.total) || 0);
-  });
-  back.addEventListener("click", () => {
-    if (returnPosition === null) return;
-    jump(view.pager.total === returnPosition.total ? returnPosition.page : view.pager.spreadForBlock(returnPosition.block));
-    returnPosition = null;
-    back.hidden = true;
-  });
-  view._readingProgress = { update, updateTime, reset() {
-    returnPosition = null;
-    back.hidden = true;
-    dragging = false;
-    update(0, 0);
-  } };
-  update(0, 0);
-  return view._readingProgress;
 }
 
 // src/batch-books.js
@@ -15251,56 +15594,6 @@ function installBatchBooks(plugin, extract, config) {
     cancelled = true;
   });
   if (plugin.settings.batchWatch) schedule();
-}
-
-// src/reader-popover.js
-function mountReaderPopover(details, content, title) {
-  const doc = details.ownerDocument, win = doc.defaultView, summary = details.querySelector("summary");
-  content.classList.add("br-reader-popover");
-  content.setAttribute("role", "region");
-  content.setAttribute("aria-label", title);
-  const close = doc.createElement("button");
-  close.type = "button";
-  close.className = "br-popover-close";
-  close.textContent = t("Close");
-  close.setAttribute("aria-label", t("Close {0}", title));
-  content.prepend(close);
-  const hide = () => {
-    details.open = false;
-    summary.focus();
-  };
-  close.addEventListener("click", hide);
-  const place = () => {
-  };
-  const toggle = () => {
-    summary.setAttribute("aria-expanded", String(details.open));
-    if (details.open) {
-      for (const other of doc.querySelectorAll(".br-reader-settings[open]")) if (other !== details) other.open = false;
-      place();
-    }
-  };
-  const outside = (e) => {
-    if (details.open && !details.contains(e.target)) details.open = false;
-  };
-  const key2 = (e) => {
-    if (details.open && e.key === "Escape") {
-      e.preventDefault();
-      e.stopPropagation();
-      hide();
-    }
-  };
-  details.classList.add("br-reader-settings");
-  summary.setAttribute("aria-expanded", "false");
-  details.addEventListener("toggle", toggle);
-  doc.addEventListener("pointerdown", outside);
-  doc.addEventListener("keydown", key2, true);
-  win.addEventListener("resize", place);
-  return () => {
-    details.removeEventListener("toggle", toggle);
-    doc.removeEventListener("pointerdown", outside);
-    doc.removeEventListener("keydown", key2, true);
-    win.removeEventListener("resize", place);
-  };
 }
 
 // src/reading-controls.js
@@ -55767,9 +56060,16 @@ function startTimerSession(view) {
   if (view._timer) return;
   view._running = true;
   view._flushAcc = 0;
+  view._readingTickAt = Date.now();
   view._timer = window.setInterval(() => {
-    view.plugin.bumpReadingTime(1);
-    view._sessionSec = (view._sessionSec || 0) + 1;
+    var _a2, _b;
+    const now = Date.now(), elapsed = readingTick(view._readingTickAt, now, readingViewActive(view));
+    view._readingTickAt = now;
+    if (!elapsed) return;
+    view.plugin.bumpReadingTime(elapsed);
+    const totals = (_b = (_a2 = view.plugin.settings).bookReadingSeconds) != null ? _b : _a2.bookReadingSeconds = {};
+    totals[view.file.path] = (totals[view.file.path] || 0) + elapsed;
+    view._sessionSec = (view._sessionSec || 0) + elapsed;
     view._flushAcc = (view._flushAcc || 0) + 1;
     if (view._flushAcc >= 15) {
       view._flushAcc = 0;
@@ -60976,6 +61276,7 @@ var ReaderView = class extends import_obsidian4.ItemView {
       this._maybePromptBookNote(file);
       this._sessionSec = 0;
       this._running = false;
+      startTimerSession(this);
       updateTimerBtn(this);
     } catch (e) {
       console.error("Elton Reader:", e);
@@ -61993,6 +62294,7 @@ function filterLibBooks(files, chipId, query, booksFolder, getProgress, getTags)
   return files.filter((f) => {
     if (needle && ![f.basename, ...getTags ? getTags(f.path) : []].join(" ").toLowerCase().includes(needle)) return false;
     if (!chipId || chipId === "all") return true;
+    if (chipId.startsWith("format:")) return chipId === "format:pdf" ? f.extension === "pdf" : f.extension !== "pdf";
     if (chipId.startsWith("status:")) return bookStatusOf(getProgress(f.path)) === chipId.slice(7);
     if (chipId.startsWith("folder:")) {
       const want = chipId.slice(7);
@@ -62023,7 +62325,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
     this.plugin = plugin;
   }
   async onOpen() {
-    var _a2, _b;
+    var _a2, _b, _c, _d;
     const { contentEl, modalEl } = this;
     this.containerEl.addClass("er-modal-lib");
     modalEl.addClass("er-modal-lib");
@@ -62035,13 +62337,24 @@ var LibraryModal = class extends import_obsidian4.Modal {
     modalEl.style.setProperty("--er-lib-border", t2.border);
     modalEl.style.setProperty("--er-lib-accent", t2.accent);
     modalEl.style.setProperty("--er-lib-muted", t2.muted);
+    contentEl.toggleClass("br-library-editing", !!this._libraryEditing);
     const hdr = contentEl.createDiv("er-lib-hdr");
     const brand = hdr.createDiv("er-lib-brand");
     brand.createDiv("er-lib-logo").setText("\u{1F4DA}");
     const hw = brand.createDiv("er-lib-hw");
     hw.createDiv("er-lib-title").setText(this.plugin.settings.libraryTitle || t("Library"));
     hw.createDiv("er-lib-sub").setText((_a2 = this.plugin.settings.librarySubtitle) != null ? _a2 : t("My reading collection"));
-    hdr.createEl("button", { text: t("Customize bookshelf") }).addEventListener("click", () => openShelfSettings(this));
+    const collectionHost = hdr.createDiv("br-collection-host");
+    hdr.createEl("button", { text: t("Reading insights") }).onclick = () => openReadingInsights(this);
+    const editBooks = hdr.createEl("button", { text: t(this._libraryEditing ? "Done" : "Edit") });
+    editBooks.onclick = () => {
+      var _a3;
+      this._libraryEditing = !this._libraryEditing;
+      (_a3 = this._librarySelected) == null ? void 0 : _a3.clear();
+      this._refresh();
+    };
+    const readingSummary = contentEl.createDiv("br-library-reading-summary");
+    readingSummary.setText(t("Today {0} \xB7 Total {1}", formatReadingTime(this.plugin.getTodaySeconds()), formatReadingTime(this.plugin.getTotalSeconds())));
     const addBtn = hdr.createDiv("er-lib-add");
     addBtn.setAttribute("role", "button");
     addBtn.setAttribute("tabindex", "0");
@@ -62056,7 +62369,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
         doPick();
       }
     });
-    const batchButton = hdr.createEl("button", { text: t("Batch import and process") });
+    const batchButton = hdr.createEl("button", { cls: "br-library-batch", text: t("Batch import and process") });
     batchButton.addEventListener("click", () => this.plugin.openBatchBooks());
     this._setupDropZone();
     const search = hdr.createDiv("er-lib-search");
@@ -62126,26 +62439,6 @@ var LibraryModal = class extends import_obsidian4.Modal {
     const files = this.app.vault.getFiles().filter(
       (f) => (f.extension === "epub" || f.extension === "pdf" || f.extension === "fb2") && (prefix === "" || f.path.startsWith(prefix))
     );
-    if (!files.length) {
-      const e = contentEl.createDiv("er-lib-empty");
-      e.createDiv("er-lib-empty-icon").setText("\u{1F5C2}");
-      e.createDiv("er-lib-empty-text").setText(t("No books"));
-      e.createDiv("er-lib-empty-hint").setText(folder || t("All vault folders"));
-      const cta = e.createDiv("er-lib-empty-add");
-      cta.setAttribute("role", "button");
-      cta.setAttribute("tabindex", "0");
-      svgIcon(cta, "plus");
-      cta.createSpan({ text: t("Add a book") });
-      const goCta = () => this._pickBooks();
-      cta.addEventListener("click", goCta);
-      cta.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter" || ev.key === " ") {
-          ev.preventDefault();
-          goCta();
-        }
-      });
-      return;
-    }
     const livePaths = new Set(files.map((f) => f.path));
     this._librarySelected = new Set([...this._librarySelected].filter((p) => livePaths.has(p)));
     this._updateLibrarySelection();
@@ -62169,6 +62462,8 @@ var LibraryModal = class extends import_obsidian4.Modal {
       let result = buildLibChips(currentFiles, folder, getProg, getTags, active);
       if (this.plugin.settings.libraryShowFolders !== true) result = result.filter((c) => !c.id.startsWith("folder:"));
       for (const tag of libraryTags(this.plugin.settings)) if (!result.some((c) => c.id === "tag:" + tag)) result.push({ id: "tag:" + tag, label: tag, count: 0 });
+      result.push({ id: "format:books", label: t("Books"), count: currentFiles.filter((f) => f.extension !== "pdf").length });
+      result.push({ id: "format:pdf", label: "PDF", count: currentFiles.filter((f) => f.extension === "pdf").length });
       result.push({ id: "archive", label: t("Archive"), count: archivedFiles.length });
       return result.map((c) => {
         var _a3;
@@ -62176,6 +62471,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
       });
     };
     let chips = makeChips();
+    if ((this.plugin.settings.libraryHiddenCollections || []).includes(active)) active = "all";
     if (!chips.some((c) => c.id === active)) {
       active = "all";
       chips = makeChips();
@@ -62195,39 +62491,25 @@ var LibraryModal = class extends import_obsidian4.Modal {
       window.requestAnimationFrame(() => this._sizeCovers());
       [120, 350, 650].forEach((t3) => window.setTimeout(() => this._sizeCovers(), t3));
     };
-    const drawChips = () => {
-      chips = makeChips();
-      chipsRow.empty();
-      if (chips.length <= 1) {
-        chipsRow.addClass("er-hidden");
-        return;
-      }
-      chipsRow.removeClass("er-hidden");
-      chips.forEach((c) => {
-        const el = chipsRow.createDiv("er-lib-chip");
-        if (c.sub) el.addClass("er-lib-chip-sub");
-        el.createSpan({ text: c.label });
-        el.createSpan({ cls: "er-lib-chip-n", text: String(c.count) });
-        if (c.id === active) el.addClass("er-lib-chip-on");
-        el.setAttribute("role", "button");
-        el.setAttribute("tabindex", "0");
-        const pick = async () => {
-          this._librarySelected.clear();
-          active = c.id;
-          this.plugin.settings.libCategory = c.id;
-          await this.plugin._saveLocalData();
-          this._refresh();
-        };
-        el.addEventListener("click", pick);
-        el.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            pick();
-          }
-        });
-      });
+    const chooseCollection = async (id) => {
+      this._librarySelected.clear();
+      this.plugin.settings.libCategory = id;
+      await this.plugin._saveLocalData();
+      this._refresh();
     };
-    drawChips();
+    (_c = this._disposeCollections) == null ? void 0 : _c.call(this);
+    this._disposeCollections = mountCollections(contentEl.ownerDocument, collectionHost, {
+      settings: this.plugin.settings,
+      getItems: makeChips,
+      save: () => this.plugin._saveLocalData(),
+      onClose: () => this._refresh(),
+      pick: chooseCollection,
+      customize: () => openShelfSettings(this),
+      onError: (e) => new import_obsidian4.Notice(t("Error: {0}", e.message))
+    });
+    chipsRow.addClass("br-current-collection");
+    chipsRow.createSpan({ text: ((_d = chips.find((c) => c.id === active)) == null ? void 0 : _d.label) || t("All") });
+    chipsRow.createEl("button", { text: t("Customize bookshelf") }).onclick = () => openShelfSettings(this);
     input.addEventListener("input", () => render(input.value));
     input.value = this._libraryQuery || "";
     render(input.value);
@@ -62392,12 +62674,15 @@ var LibraryModal = class extends import_obsidian4.Modal {
   }
   // Rebuild the library in place after books were added, without a modal flash.
   _refresh() {
+    var _a2;
     if (this._coverResizeObs) {
       try {
         this._coverResizeObs.disconnect();
       } catch (e) {
       }
     }
+    (_a2 = this._disposeCollections) == null ? void 0 : _a2.call(this);
+    this._disposeCollections = null;
     this.contentEl.empty();
     this.onOpen();
   }
@@ -62412,7 +62697,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
     });
   }
   renderCard(grid, file) {
-    var _a3, _b2;
+    var _a3, _b2, _c;
     let _a2, _b;
     const prog = this.plugin.getProgress(file.path);
     const pct = (_a2 = prog == null ? void 0 : prog.percent) != null ? _a2 : 0;
@@ -62461,6 +62746,8 @@ var LibraryModal = class extends import_obsidian4.Modal {
     } else {
       meta.setText(t("Not started"));
     }
+    const readSeconds = ((_b2 = this.plugin.settings.bookReadingSeconds) == null ? void 0 : _b2[file.path]) || 0;
+    if (readSeconds > 0) info2.createDiv({ cls: "br-book-reading-time", text: t("Read {0}", formatReadingTime(readSeconds)) });
     const tagRow = info2.createDiv("br-card-tags");
     for (const tag of bookTagsOf(this.plugin.settings, file.path)) {
       const button = tagRow.createEl("button", { text: tag });
@@ -62472,7 +62759,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
         this._refresh();
       };
     }
-    if ((_b2 = this.plugin.settings.bookArchives) == null ? void 0 : _b2[file.path]) info2.createDiv({ cls: "br-archive-badge", text: t("Archived") });
+    if ((_c = this.plugin.settings.bookArchives) == null ? void 0 : _c[file.path]) info2.createDiv({ cls: "br-archive-badge", text: t("Archived") });
     const bookMenu = (e) => {
       var _a4;
       e.preventDefault();
@@ -62495,7 +62782,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
       menu.showAtMouseEvent(e);
     };
     card.addEventListener("contextmenu", bookMenu);
-    const moreBtn = cover.createDiv("er-lib-morebtn");
+    const moreBtn = info2.createEl("button", { cls: "er-lib-morebtn", attr: { type: "button" } });
     moreBtn.setAttribute("aria-label", t("Book actions"));
     svgIcon(moreBtn, "more");
     moreBtn.addEventListener("click", bookMenu);
@@ -62638,13 +62925,14 @@ var LibraryModal = class extends import_obsidian4.Modal {
     return dataUrl;
   }
   onClose() {
-    var _a2;
+    var _a2, _b;
+    (_a2 = this._disposeCollections) == null ? void 0 : _a2.call(this);
     window.clearTimeout(this._thumbSaveT);
     if (this._thumbDirty) {
       this._thumbDirty = false;
       this.plugin.saveAll();
     }
-    (_a2 = this._coverResizeObs) == null ? void 0 : _a2.disconnect();
+    (_b = this._coverResizeObs) == null ? void 0 : _b.disconnect();
     this.contentEl.empty();
   }
 };
@@ -62674,6 +62962,8 @@ var LibraryView = class extends import_obsidian4.ItemView {
   close() {
   }
   onClose() {
+    var _a2;
+    (_a2 = this._disposeCollections) == null ? void 0 : _a2.call(this);
     if (this._coverResizeObs) {
       try {
         this._coverResizeObs.disconnect();
@@ -62740,6 +63030,7 @@ var ReaderModal = class extends import_obsidian4.Modal {
     await this._loadBook();
     this._sessionSec = 0;
     this._running = false;
+    if (this.pager) startTimerSession(this);
     updateTimerBtn(this);
     this._lastW = this.areaEl.clientWidth;
     this._resizeObs = new ResizeObserver(() => {
