@@ -76,3 +76,11 @@ Book actions and bulk selection now have Add to bookshelves: check multiple shel
 Library appearance is separate from collection membership. Reading insights opens from the reading-time summary. Search has its own row, book actions stay visible, cover-fit controls are reserved for Edit mode, and tapping a book in Edit mode selects it. Collection editing uses compact touch controls.
 
 55 automated tests pass. Membership save and dialog layouts checked at a 768 x 1024 browser viewport using the actual components with an Obsidian UI adapter. Native iPad confirmation remains required. Background speech remains experimental as described for 0.4.8.
+
+## 0.4.10: book details, shelf lifecycle and continue reading
+
+EPUB titles and authors are loaded serially from package metadata and cached by file modification time and size. Books over 100 MB skip automatic metadata extraction. Invalid EPUBs retain a cleaned filename fallback. File contents and filenames never change. Edit book details provides local display overrides and a reset to extracted metadata. These display overrides are device-local; existing shelf membership synchronization is unchanged. Search includes cached titles/authors and original filenames. Title sorting uses available display titles.
+
+Shelves now include Unclassified. Custom shelves can be deleted with a second confirmation; books are retained. Books can be removed directly from the current shelf. Continue reading shows the most recently opened existing, unarchived book and its saved progress. It resumes through the existing reader, without automatic audio playback.
+
+57 automated tests pass, including EPUB metadata parsing/cache invalidation, display overrides, shelf removal and recent-book selection. iPad runtime confirmation remains required.

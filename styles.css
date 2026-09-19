@@ -2099,3 +2099,15 @@ body:not(.is-mobile) .er-bot {
  .er-lib .br-current-collection,.er-lib .br-shelf-controls {padding-left:12px;padding-right:12px;}
  .er-lib .br-collections .br-collections-panel {right:12px!important;width:calc(100vw - 24px)!important;}
 }
+.br-continue-card {display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 24px 18px;padding:18px 20px;border:1px solid var(--er-lib-border);border-radius:18px;background:var(--er-lib-card);}
+.br-continue-card>div {display:flex;flex-direction:column;gap:6px;min-width:0;}
+.br-continue-card strong {font-size:20px;overflow-wrap:anywhere;}
+.br-continue-card small,.br-continue-card span,.br-book-author {color:var(--er-lib-muted);font-size:12px;}
+.br-continue-card>button {flex-shrink:0;min-height:44px;}
+.br-book-author {margin:4px 0;overflow-wrap:anywhere;}
+.br-collection-row:has(input) .br-collection-delete {grid-column:2 / -1;font-size:12px!important;color:var(--text-error);background:none;box-shadow:none;border:0;text-align:left;}
+.br-collection-row:has(input) .br-collection-delete::after {content:none!important;}
+.br-collection-row:has(input) .br-collection-up,.br-collection-row:has(input) .br-collection-down {font-size:0!important;}
+.br-collection-row:has(input) .br-collection-up::after {content:'↑'!important;font-size:20px;}
+.br-collection-row:has(input) .br-collection-down::after {content:'↓'!important;font-size:20px;}
+@media(max-width:600px){.br-continue-card{margin:0 12px 16px;padding:14px;}.br-continue-card strong{font-size:17px;}}
