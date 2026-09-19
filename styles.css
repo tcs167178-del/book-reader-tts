@@ -2049,3 +2049,53 @@ body:not(.is-mobile) .er-bot {
 .br-tag-create input,.br-tag-edit input {min-width:0;flex:1;}
 .br-shelf-dialog .setting-item-control input {max-width:250px;}
 @media(max-width:600px){.br-shelf-controls{padding:12px;gap:6px;}.br-shelf-controls button{min-height:42px;}.br-shelf-dialog .setting-item{flex-wrap:wrap;gap:8px;}.br-tag-edit{flex-wrap:wrap;}}
+/* Library touch layout: separate navigation, appearance and book membership. */
+.er-lib .er-lib-hdr {display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:12px;padding:24px 24px 8px;}
+.er-lib .er-lib-brand {min-width:0;margin:0;}
+.er-lib .er-lib-search {grid-column:1 / -1;width:100%;max-width:none;min-width:0;order:0;}
+.er-lib .er-lib-count {display:none;}
+.er-lib .er-lib-size {grid-column:4;grid-row:1;}
+.er-lib .er-lib-add {margin:0;}
+.er-lib .br-library-batch {grid-column:1 / -1;}
+.er-lib button.br-library-reading-summary {display:block;width:fit-content;max-width:calc(100% - 48px);margin:0 24px 16px;padding:4px 0;height:auto;min-height:36px;border:0;background:none;box-shadow:none;text-align:left;color:var(--er-lib-muted);font-size:13px;white-space:normal;}
+.er-lib .br-shelf-controls {padding:0 24px 12px;gap:8px;flex-wrap:wrap;}
+.er-lib .br-current-collection {padding:0 24px 12px;gap:12px;margin:0;}
+.er-lib .br-current-collection>button {border:0;background:none;box-shadow:none;color:var(--er-lib-muted);min-height:44px;}
+.er-lib .br-collections summary {padding:8px 0;background:none;border-radius:0;font-size:20px;max-width:65vw;white-space:normal;}
+.er-lib .br-collections .br-collections-panel {position:fixed!important;top:100px!important;right:20px!important;width:min(400px,calc(100vw - 40px))!important;max-height:calc(100dvh - 140px)!important;box-sizing:border-box;z-index:1000;}
+.br-collection-row:has(input) {display:grid;grid-template-columns:36px minmax(0,1fr) auto 32px 32px;gap:4px;padding:8px;}
+.br-collection-row input {min-width:0;width:100%;}
+.br-collection-row:has(input) button {padding:4px;min-width:0;min-height:40px;}
+.br-collection-row:has(input) button:first-child {font-size:0;}
+.br-collection-row:has(input) button:first-child::after {content:'−';font-size:22px;}
+.br-collection-row.is-hidden-collection button:first-child::after {content:'+';}
+.br-collection-row:has(input) button:nth-last-child(2),.br-collection-row:has(input) button:last-child {font-size:0;}
+.br-collection-row:has(input) button:nth-last-child(2)::after {content:'↑';font-size:20px;}
+.br-collection-row:has(input) button:last-child::after {content:'↓';font-size:20px;}
+.er-lib:not(.br-library-editing) .er-lib-fitbtn {display:none;}
+.er-lib .er-lib-info .er-lib-morebtn {display:flex!important;visibility:visible!important;font-size:16px;letter-spacing:1px;min-width:40px;min-height:44px;color:var(--er-lib-text);}
+.br-membership-list {display:flex;flex-direction:column;max-height:45dvh;overflow-y:auto;background:var(--background-secondary);border-radius:14px;margin:16px 0;}
+.br-membership-row {display:flex;align-items:center;gap:14px;min-height:52px;padding:10px 14px;border-bottom:1px solid var(--background-modifier-border);cursor:pointer;}
+.br-membership-row span {overflow-wrap:anywhere;}
+.br-membership-row input {flex:0 0 auto;width:20px;height:20px;}
+.br-shelf-dialog .br-tag-create {display:flex;gap:8px;flex-wrap:wrap;}
+.br-tag-create input {min-width:0;flex:1 1 140px;min-height:44px;}
+.br-tag-create button {min-height:44px;}
+.br-insights {max-width:620px;margin:auto;}
+.br-insights h2 {font-size:28px;margin-bottom:6px;}
+.br-insight-caption {display:block;color:var(--text-muted);font-size:13px;line-height:1.6;}
+.br-insight-cards {margin:24px 0;}
+.br-insight-card {padding:20px;border:1px solid var(--background-modifier-border);background:var(--background-primary);}
+.br-insight-card strong {font-size:28px;letter-spacing:-1px;}
+.br-insight-chart {padding:16px 0;}
+.br-insight-track {height:120px;background:transparent;justify-content:center;}
+.br-insight-bar {width:65%;min-height:2px;}
+@media(max-width:600px){
+ .er-lib .er-lib-hdr {grid-template-columns:minmax(0,1fr) auto auto;padding:16px 12px 8px;gap:8px;}
+ .er-lib .er-lib-size {display:none;}
+ .er-lib .er-lib-brand {height:auto;}
+ .er-lib .er-lib-search {order:0;}
+ .er-lib button.br-library-reading-summary {margin:0 12px 12px;max-width:calc(100% - 24px);}
+ .er-lib .br-current-collection,.er-lib .br-shelf-controls {padding-left:12px;padding-right:12px;}
+ .er-lib .br-collections .br-collections-panel {right:12px!important;width:calc(100vw - 24px)!important;}
+}

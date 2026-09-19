@@ -1,7 +1,7 @@
 {
   "id": "book-reader-tts",
   "name": "Book Reader TTS Preview",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "minAppVersion": "1.4.0",
   "description": "Experimental EPUB system speech fork of Book Reader 3.1.2. Separate progress and annotations.",
   "author": "tcs167178-del (fork); Elton Labs (original)",

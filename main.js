@@ -14315,7 +14315,7 @@ var zh_default = {
   computer: "\u7535\u8111",
   tablet: "\u5E73\u677F",
   phone: "\u624B\u673A",
-  "Customize bookshelf": "\u81EA\u5B9A\u4E49\u4E66\u67B6",
+  "Customize bookshelf": "\u4E66\u5E93\u5916\u89C2",
   "Shelf name": "\u4E66\u67B6\u540D\u79F0",
   "Shelf subtitle": "\u4E66\u67B6\u7B80\u4ECB",
   "My reading collection": "\u6211\u7684\u9605\u8BFB\u6536\u85CF",
@@ -14370,9 +14370,9 @@ var zh_default = {
   "Voice test finished": "\u58F0\u97F3\u6D4B\u8BD5\u5DF2\u7ED3\u675F",
   "Voice test requested; confirm whether you hear audio": "\u5DF2\u8BF7\u6C42\u64AD\u653E\uFF0C\u8BF7\u786E\u8BA4\u662F\u5426\u542C\u5230\u58F0\u97F3",
   "Test system default voice (Chinese)": "\u8BD5\u542C\u7CFB\u7EDF\u9ED8\u8BA4\u58F0\u97F3\uFF08\u4E2D\u6587\uFF09",
-  Collections: "\u85CF\u4E66",
+  Collections: "\u4E66\u67B6",
   Edit: "\u7F16\u8F91",
-  "New collection": "\u65B0\u5EFA\u85CF\u4E66",
+  "New collection": "\u65B0\u5EFA\u4E66\u67B6",
   Add: "\u6DFB\u52A0",
   Saved: "\u5DF2\u4FDD\u5B58",
   "Show collection": "\u663E\u793A",
@@ -14400,7 +14400,15 @@ var zh_default = {
   "Open a book to start recording per-book reading time": "\u6253\u5F00\u4E00\u672C\u4E66\uFF0C\u5373\u53EF\u5F00\u59CB\u8BB0\u5F55\u6BCF\u672C\u4E66\u7684\u9605\u8BFB\u65F6\u957F",
   "Background speech experiment": "\u540E\u53F0\u8FDE\u7EED\u6717\u8BFB\u5B9E\u9A8C",
   "Queues up to 32 phrases in advance. iPad may still suspend speech when locked. Voice and speed changes require Apply to current phrase for already queued text.": "\u63D0\u524D\u63D0\u4EA4\u6700\u591A 32 \u53E5\u3002iPad \u9501\u5C4F\u540E\u4ECD\u53EF\u80FD\u4E2D\u65AD\u6717\u8BFB\uFF1B\u5DF2\u6392\u961F\u8BED\u53E5\u7684\u97F3\u8272\u548C\u8BED\u901F\u9700\u70B9\u51FB\u201C\u5E94\u7528\u5230\u5F53\u524D\u53E5\u201D\u624D\u80FD\u66F4\u65B0\u3002",
-  "Speech was interrupted in the background. Press Continue to resume from the saved phrase.": "\u540E\u53F0\u6717\u8BFB\u5DF2\u4E2D\u65AD\uFF0C\u70B9\u51FB\u201C\u7EE7\u7EED\u201D\u4ECE\u4FDD\u5B58\u7684\u8BED\u53E5\u7EED\u542C\u3002"
+  "Speech was interrupted in the background. Press Continue to resume from the saved phrase.": "\u540E\u53F0\u6717\u8BFB\u5DF2\u4E2D\u65AD\uFF0C\u70B9\u51FB\u201C\u7EE7\u7EED\u201D\u4ECE\u4FDD\u5B58\u7684\u8BED\u53E5\u7EED\u542C\u3002",
+  "Add to bookshelves": "\u52A0\u5165\u4E66\u67B6",
+  "A book can belong to several shelves. Uncheck a shelf to remove membership; the book file stays in place.": "\u4E00\u672C\u4E66\u53EF\u4EE5\u52A0\u5165\u591A\u4E2A\u4E66\u67B6\u3002\u53D6\u6D88\u52FE\u9009\u5373\u53EF\u79FB\u51FA\u8BE5\u4E66\u67B6\uFF0C\u4E0D\u4F1A\u79FB\u52A8\u6216\u5220\u9664\u4E66\u7C4D\u3002",
+  "Create your first bookshelf below.": "\u5728\u4E0B\u65B9\u521B\u5EFA\u7B2C\u4E00\u4E2A\u4E66\u67B6\u3002",
+  "Create and select": "\u521B\u5EFA\u5E76\u9009\u4E2D",
+  "Library title": "\u4E66\u5E93\u603B\u6807\u9898",
+  "Library subtitle": "\u4E66\u5E93\u526F\u6807\u9898",
+  "Your reading this week": "\u56DE\u987E\u8FD9\u4E00\u5468\u7684\u9605\u8BFB",
+  "Reading time is recorded on this device while the reader is in the foreground.": "\u9605\u8BFB\u65F6\u95F4\u6309\u672C\u673A\u524D\u53F0\u9605\u8BFB\u8BB0\u5F55\u3002"
 };
 
 // src/i18n.js
@@ -14463,23 +14471,12 @@ function visibleBooks(files, settings, archive = false) {
     return Boolean((_a2 = settings.bookArchives) == null ? void 0 : _a2[f.path]) === archive;
   });
 }
-function editTags(settings, paths, tags, append = false) {
-  var _a2;
-  (_a2 = settings.bookTags) != null ? _a2 : settings.bookTags = {};
-  for (const path5 of paths) settings.bookTags[path5] = parseTags([...append ? tagsFor(settings, path5) : [], ...tags].join(","));
-  settings.libraryTagNames = [.../* @__PURE__ */ new Set([...libraryTags(settings), ...tags])];
-}
 function renameTag(settings, oldName, newName) {
   const parsed = parseTags(newName), name = parsed[0];
   if (!name || parsed.length !== 1 || /[,，;；、\n]/u.test(newName)) throw Error("Tag names cannot be empty or contain separators.");
   settings.libraryTagNames = [...new Set(libraryTags(settings).map((t2) => t2 === oldName ? name : t2))];
   for (const [path5, tags] of Object.entries(settings.bookTags || {})) settings.bookTags[path5] = [...new Set(tags.map((t2) => t2 === oldName ? name : t2))];
   if (settings.libCategory === "tag:" + oldName) settings.libCategory = "tag:" + name;
-}
-function removeTag(settings, name) {
-  settings.libraryTagNames = libraryTags(settings).filter((t2) => t2 !== name);
-  for (const [path5, tags] of Object.entries(settings.bookTags || {})) settings.bookTags[path5] = tags.filter((t2) => t2 !== name);
-  if (settings.libCategory === "tag:" + name) settings.libCategory = "all";
 }
 function moveLibraryMetadata(settings, oldPath, newPath) {
   for (const key2 of ["bookArchives", "bookTags", "bookNoteLinks", "bookNotePrompted", "bookTemplates", "coverFits", "bookReadingSeconds"]) {
@@ -14499,6 +14496,16 @@ function sortLibrary(files, mode, getProgress, locale) {
     if (mode === "progress") return (((_c = getProgress(b.path)) == null ? void 0 : _c.percent) || 0) - (((_d = getProgress(a.path)) == null ? void 0 : _d.percent) || 0) || title();
     return (((_e = getProgress(b.path)) == null ? void 0 : _e.lastRead) || 0) - (((_f = getProgress(a.path)) == null ? void 0 : _f.lastRead) || 0) || title();
   });
+}
+function setCollectionMembership(settings, paths, changes) {
+  var _a2;
+  (_a2 = settings.bookTags) != null ? _a2 : settings.bookTags = {};
+  for (const path5 of paths) {
+    const tags = new Set(tagsFor(settings, path5));
+    for (const [name, enabled] of changes) enabled ? tags.add(name) : tags.delete(name);
+    settings.bookTags[path5] = [...tags];
+  }
+  settings.libraryTagNames = [.../* @__PURE__ */ new Set([...libraryTags(settings), ...Array.from(changes.keys())])];
 }
 
 // src/reader-popover.js
@@ -14599,14 +14606,6 @@ function mountCollections(doc, host, { settings, getItems, save, pick, customize
   add.type = "submit";
   add.textContent = t("Add");
   form.append(add);
-  const appearance = doc.createElement("button");
-  appearance.type = "button";
-  appearance.textContent = t("Customize bookshelf");
-  appearance.onclick = () => {
-    details.open = false;
-    customize();
-  };
-  panel.append(appearance);
   let editing = false, busy = false, dirty = false;
   const closed = () => {
     if (!details.open && dirty) {
@@ -15154,7 +15153,7 @@ var ReadingInsights = class extends import_obsidian2.Modal {
     c.addClass("br-insights");
     const stats = readingInsights(this.view.plugin.settings);
     c.createEl("h2", { text: t("Reading insights") });
-    c.createEl("p", { text: t("Recorded on this device. Per-book history starts with this update. Foreground time is an estimate, not proof of attentive reading.") });
+    c.createEl("p", { cls: "br-insight-caption", text: t("Your reading this week") });
     const cards = c.createDiv("br-insight-cards");
     for (const [label, value] of [[t("Today"), formatReadingTime(stats.today)], [t("Last 7 days"), formatReadingTime(stats.week)], [t("Total reading"), formatReadingTime(stats.total)], [t("Reading streak"), t("{0} days", stats.streak)]]) {
       const card = cards.createDiv("br-insight-card");
@@ -15176,6 +15175,7 @@ var ReadingInsights = class extends import_obsidian2.Modal {
     c.createEl("p", { text: t("Read on {0} of the last 7 days", stats.activeDays) });
     c.createEl("h3", { text: t("Most-read books by time") });
     if (!stats.ranked.length) c.createEl("p", { text: t("Open a book to start recording per-book reading time") });
+    c.createEl("small", { cls: "br-insight-caption", text: t("Reading time is recorded on this device while the reader is in the foreground.") });
     for (const book of stats.ranked.slice(0, 8)) {
       const row = c.createDiv("br-insight-book");
       const file = this.app.vault.getAbstractFileByPath(book.path);
@@ -15200,18 +15200,13 @@ var ShelfSettings = class extends import_obsidian2.Modal {
     c.addClass("br-shelf-dialog");
     c.createEl("h2", { text: t("Customize bookshelf") });
     const draft = { ...s, libraryLabels: { ...s.libraryLabels } };
-    new import_obsidian2.Setting(c).setName(t("Shelf name")).addText((x) => x.setValue(s.libraryTitle || "").setPlaceholder(t("Library")).onChange((v) => draft.libraryTitle = v.trim()));
-    new import_obsidian2.Setting(c).setName(t("Shelf subtitle")).addText((x) => {
+    new import_obsidian2.Setting(c).setName(t("Library title")).addText((x) => x.setValue(s.libraryTitle || "").setPlaceholder(t("Library")).onChange((v) => draft.libraryTitle = v.trim()));
+    new import_obsidian2.Setting(c).setName(t("Library subtitle")).addText((x) => {
       var _a2;
       return x.setValue((_a2 = s.librarySubtitle) != null ? _a2 : "").setPlaceholder(t("My reading collection")).onChange((v) => draft.librarySubtitle = v.trim());
     });
     new import_obsidian2.Setting(c).setName(t("Show folder filters")).setDesc(t("Folder names are separate from your custom tags.")).addToggle((x) => x.setValue(s.libraryShowFolders === true).onChange((v) => draft.libraryShowFolders = v));
     new import_obsidian2.Setting(c).setName(t("Shelf layout")).addDropdown((x) => x.addOption("grid", t("Covers")).addOption("compact", t("Compact covers")).setValue(s.libraryLayout || "grid").onChange((v) => draft.libraryLayout = v));
-    c.createEl("h3", { text: t("Filter names") });
-    for (const [key2, label] of [["all", "All"], ["status:reading", "Reading"], ["status:new", "Not started"], ["status:done", "Finished"], ["archive", "Archive"]]) new import_obsidian2.Setting(c).setName(t(label)).addText((x) => {
-      var _a2;
-      return x.setValue(((_a2 = s.libraryLabels) == null ? void 0 : _a2[key2]) || "").setPlaceholder(t(label)).onChange((v) => draft.libraryLabels[key2] = v.trim());
-    });
     new import_obsidian2.Setting(c).addButton((b) => b.setButtonText(t("Save")).setCta().onClick(async () => {
       try {
         for (const key2 of ["libraryTitle", "librarySubtitle", "libraryShowFolders", "libraryLayout", "libraryLabels"]) s[key2] = draft[key2];
@@ -15222,45 +15217,6 @@ var ShelfSettings = class extends import_obsidian2.Modal {
         new import_obsidian2.Notice(t("Error: {0}", e.message));
       }
     }));
-    c.createEl("h3", { text: t("Manage tags") });
-    c.createEl("p", { text: t("Tags group books without moving files. Renaming updates every book; removing a tag keeps all books.") });
-    const row = c.createDiv("br-tag-create"), input = row.createEl("input", { attr: { placeholder: t("New tag"), "aria-label": t("New tag") } });
-    row.createEl("button", { text: t("Add tag") }).onclick = async () => {
-      const names = parseTags(input.value);
-      if (!names.length) return;
-      s.libraryTagNames = [.../* @__PURE__ */ new Set([...libraryTags(s), ...names])];
-      await this.view.plugin._saveLocalData();
-      input.value = "";
-      draw();
-      this.view._refresh();
-    };
-    const list = c.createDiv();
-    mountSyncSettings(c, this.view.plugin);
-    const draw = () => {
-      list.empty();
-      for (const tag of libraryTags(s)) {
-        const r = list.createDiv("br-tag-edit");
-        const name = r.createEl("input", { attr: { "aria-label": t("Tag name") } });
-        name.value = tag;
-        r.createEl("button", { text: t("Rename") }).onclick = async () => {
-          try {
-            renameTag(s, tag, name.value);
-            await this.view.plugin._saveLocalData();
-            draw();
-            this.view._refresh();
-          } catch (e) {
-            new import_obsidian2.Notice(t(e.message));
-          }
-        };
-        r.createEl("button", { text: t("Remove tag") }).onclick = async () => {
-          removeTag(s, tag);
-          await this.view.plugin._saveLocalData();
-          draw();
-          this.view._refresh();
-        };
-      }
-    };
-    draw();
   }
   onClose() {
     this.contentEl.empty();
@@ -15271,28 +15227,59 @@ var BookTags = class extends import_obsidian2.Modal {
     super(view.app);
     this.view = view;
     this.paths = paths;
-    this.append = append;
   }
   onOpen() {
     const c = this.contentEl, s = this.view.plugin.settings;
     c.addClass("br-shelf-dialog");
-    c.createEl("h2", { text: t("Edit book tags") });
-    c.createEl("p", { text: this.append ? t("Adds tags to selected books without removing existing tags.") : t("Separate tags with commas. Clear the field to remove tags from this book.") });
-    const input = c.createEl("input", { cls: "br-tag-input", attr: { "aria-label": t("Tags") } });
-    input.value = this.append ? "" : tagsFor(s, this.paths[0]).join(", ");
-    const choices = c.createDiv("br-card-tags");
-    for (const tag of libraryTags(s)) {
-      const b = choices.createEl("button", { text: tag });
-      b.onclick = () => input.value = parseTags(input.value + "," + tag).join(", ");
-    }
+    c.createEl("h2", { text: t("Add to bookshelves") });
+    c.createEl("p", { text: t("A book can belong to several shelves. Uncheck a shelf to remove membership; the book file stays in place.") });
+    const changes = /* @__PURE__ */ new Map(), names = new Set(libraryTags(s));
+    const list = c.createDiv("br-membership-list");
+    const draw = () => {
+      list.empty();
+      if (!names.size) list.createEl("p", { text: t("Create your first bookshelf below.") });
+      for (const name of names) {
+        const row = list.createEl("label", { cls: "br-membership-row" });
+        const box = row.createEl("input", { attr: { type: "checkbox" } });
+        const count = this.paths.filter((path5) => tagsFor(s, path5).includes(name)).length;
+        box.checked = changes.has(name) ? changes.get(name) : count === this.paths.length;
+        box.indeterminate = !changes.has(name) && count > 0 && count < this.paths.length;
+        row.createSpan({ text: name });
+        box.onchange = () => {
+          changes.set(name, box.checked);
+          box.indeterminate = false;
+        };
+      }
+    };
+    draw();
+    const form = c.createEl("form", { cls: "br-tag-create" });
+    const input = form.createEl("input", { attr: { placeholder: t("New collection"), "aria-label": t("New collection") } });
+    form.createEl("button", { text: t("Create and select"), attr: { type: "submit" } });
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const parsed = parseTags(input.value);
+      if (parsed.length !== 1) {
+        new import_obsidian2.Notice(t("Enter one collection name"));
+        return;
+      }
+      names.add(parsed[0]);
+      changes.set(parsed[0], true);
+      input.value = "";
+      draw();
+    };
     new import_obsidian2.Setting(c).addButton((b) => b.setButtonText(t("Cancel")).onClick(() => this.close())).addButton((b) => b.setButtonText(t("Save")).setCta().onClick(async () => {
+      const oldTags = JSON.parse(JSON.stringify(s.bookTags || {})), oldNames = [...s.libraryTagNames || []];
+      b.setDisabled(true);
       try {
-        editTags(s, this.paths, parseTags(input.value), this.append);
+        setCollectionMembership(s, this.paths, changes);
         await this.view.plugin._saveLocalData();
         this.close();
         this.view._refresh();
       } catch (e) {
+        s.bookTags = oldTags;
+        s.libraryTagNames = oldNames;
         new import_obsidian2.Notice(t("Error: {0}", e.message));
+        b.setDisabled(false);
       }
     }));
   }
@@ -62414,7 +62401,6 @@ var LibraryModal = class extends import_obsidian4.Modal {
     hw.createDiv("er-lib-title").setText(this.plugin.settings.libraryTitle || t("Library"));
     hw.createDiv("er-lib-sub").setText((_a2 = this.plugin.settings.librarySubtitle) != null ? _a2 : t("My reading collection"));
     const collectionHost = hdr.createDiv("br-collection-host");
-    hdr.createEl("button", { text: t("Reading insights") }).onclick = () => openReadingInsights(this);
     const editBooks = hdr.createEl("button", { text: t(this._libraryEditing ? "Done" : "Edit") });
     editBooks.onclick = () => {
       var _a3;
@@ -62422,8 +62408,10 @@ var LibraryModal = class extends import_obsidian4.Modal {
       (_a3 = this._librarySelected) == null ? void 0 : _a3.clear();
       this._refresh();
     };
-    const readingSummary = contentEl.createDiv("br-library-reading-summary");
-    readingSummary.setText(t("Today {0} \xB7 Total {1}", formatReadingTime(this.plugin.getTodaySeconds()), formatReadingTime(this.plugin.getTotalSeconds())));
+    const readingSummary = contentEl.createEl("button", { cls: "br-library-reading-summary" });
+    readingSummary.onclick = () => openReadingInsights(this);
+    readingSummary.setAttribute("aria-label", t("Reading insights"));
+    readingSummary.setText(t("Today {0} \xB7 Total {1}", formatReadingTime(this.plugin.getTodaySeconds()), formatReadingTime(this.plugin.getTotalSeconds())) + "  \u203A");
     const addBtn = hdr.createDiv("er-lib-add");
     addBtn.setAttribute("role", "button");
     addBtn.setAttribute("tabindex", "0");
@@ -62487,7 +62475,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
       this._librarySelected.clear();
       this._refresh();
     };
-    controls.createEl("button", { text: t("Add tags") }).onclick = () => {
+    controls.createEl("button", { text: t("Add to bookshelves") }).onclick = () => {
       if (this._librarySelected.size) openBookTags(this, [...this._librarySelected], true);
       else new import_obsidian4.Notice(t("Select books first"));
     };
@@ -62577,7 +62565,9 @@ var LibraryModal = class extends import_obsidian4.Modal {
       onError: (e) => new import_obsidian4.Notice(t("Error: {0}", e.message))
     });
     chipsRow.addClass("br-current-collection");
-    chipsRow.createSpan({ text: ((_d = chips.find((c) => c.id === active)) == null ? void 0 : _d.label) || t("All") });
+    chipsRow.append(collectionHost);
+    const collectionSummary = collectionHost.querySelector("summary");
+    collectionSummary.textContent = (((_d = chips.find((c) => c.id === active)) == null ? void 0 : _d.label) || t("All")) + " \u25BE";
     chipsRow.createEl("button", { text: t("Customize bookshelf") }).onclick = () => openShelfSettings(this);
     input.addEventListener("input", () => render(input.value));
     input.value = this._libraryQuery || "";
@@ -62834,7 +62824,7 @@ var LibraryModal = class extends import_obsidian4.Modal {
       e.preventDefault();
       e.stopPropagation();
       const menu = new import_obsidian4.Menu();
-      menu.addItem((it) => it.setTitle(t("Edit book tags")).setIcon("tags").onClick(() => openBookTags(this, [file.path])));
+      menu.addItem((it) => it.setTitle(t("Add to bookshelves")).setIcon("tags").onClick(() => openBookTags(this, [file.path])));
       const archived = !!((_a4 = this.plugin.settings.bookArchives) == null ? void 0 : _a4[file.path]);
       menu.addItem((it) => it.setTitle(archived ? t("Restore to shelf") : t("Archive book")).setIcon(archived ? "archive-restore" : "archive").onClick(async () => {
         setArchived(this.plugin.settings, [file.path], !archived);
@@ -62853,9 +62843,14 @@ var LibraryModal = class extends import_obsidian4.Modal {
     card.addEventListener("contextmenu", bookMenu);
     const moreBtn = info2.createEl("button", { cls: "er-lib-morebtn", attr: { type: "button" } });
     moreBtn.setAttribute("aria-label", t("Book actions"));
-    svgIcon(moreBtn, "more");
+    moreBtn.setText("\u2022\u2022\u2022");
     moreBtn.addEventListener("click", bookMenu);
     card.addEventListener("click", () => {
+      if (this._libraryEditing) {
+        select.checked = !select.checked;
+        select.onchange();
+        return;
+      }
       this.close();
       this.plugin.openFile(file);
     });

@@ -68,3 +68,11 @@ Voice settings now offer an opt-in Background speech experiment, off by default.
 Pause, stop and paragraph navigation cancel queued utterances. Use Apply to current phrase after changing voice or speed to replace already queued speech. Returning from the background offers Continue if the engine reports no speaking or pending speech.
 
 Validation: 54 automated tests pass and production build succeeds. iPad background playback remains unverified. Test foreground speech first, then switch apps for 60 seconds, then test locking the screen separately. Report whether playback stops immediately, at a sentence boundary, or later. Disable the experiment to return to sentence-at-a-time playback.
+
+## 0.4.9: bookshelves and touch navigation
+
+Book actions and bulk selection now have Add to bookshelves: check multiple shelves, create and select a shelf, or uncheck to remove membership without moving files. Existing tags remain compatible. Mixed bulk selections preserve memberships unless explicitly changed.
+
+Library appearance is separate from collection membership. Reading insights opens from the reading-time summary. Search has its own row, book actions stay visible, cover-fit controls are reserved for Edit mode, and tapping a book in Edit mode selects it. Collection editing uses compact touch controls.
+
+55 automated tests pass. Membership save and dialog layouts checked at a 768 x 1024 browser viewport using the actual components with an Obsidian UI adapter. Native iPad confirmation remains required. Background speech remains experimental as described for 0.4.8.
