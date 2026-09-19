@@ -14551,7 +14551,16 @@ var zh_default = {
   "Last local merge: {0}": "\u6700\u8FD1\u672C\u5730\u5408\u5E76\uFF1A{0}",
   "No successful merge in this session.": "\u672C\u6B21\u4F1A\u8BDD\u5C1A\u65E0\u6210\u529F\u5408\u5E76\u8BB0\u5F55\u3002",
   "Merge now": "\u7ACB\u5373\u5408\u5E76",
-  "Continuing from synced reading position: {0}%": "\u5DF2\u4ECE\u540C\u6B65\u9605\u8BFB\u4F4D\u7F6E\u7EE7\u7EED\uFF1A{0}%"
+  "Continuing from synced reading position: {0}%": "\u5DF2\u4ECE\u540C\u6B65\u9605\u8BFB\u4F4D\u7F6E\u7EE7\u7EED\uFF1A{0}%",
+  "All voices diagnostics (unfiltered)": "\u5168\u90E8\u97F3\u8272\u8BCA\u65AD\uFF08\u4E0D\u7B5B\u9009\uFF09",
+  "Full voice report": "\u5B8C\u6574\u97F3\u8272\u62A5\u544A",
+  "Export all voices to vault": "\u5BFC\u51FA\u5168\u90E8\u97F3\u8272\u5230\u4ED3\u5E93",
+  "Voice report saved: {0}": "\u97F3\u8272\u62A5\u544A\u5DF2\u4FDD\u5B58\uFF1A{0}",
+  "Voice report failed: {0}": "\u97F3\u8272\u62A5\u544A\u4FDD\u5B58\u5931\u8D25\uFF1A{0}",
+  "Voice test failed: {0}": "\u58F0\u97F3\u6D4B\u8BD5\u5931\u8D25\uFF1A{0}",
+  "Voice test finished": "\u58F0\u97F3\u6D4B\u8BD5\u5DF2\u7ED3\u675F",
+  "Voice test requested; confirm whether you hear audio": "\u5DF2\u8BF7\u6C42\u64AD\u653E\uFF0C\u8BF7\u786E\u8BA4\u662F\u5426\u542C\u5230\u58F0\u97F3",
+  "Test system default voice (Chinese)": "\u8BD5\u542C\u7CFB\u7EDF\u9ED8\u8BA4\u58F0\u97F3\uFF08\u4E2D\u6587\uFF09"
 };
 
 // src/i18n.js
@@ -15443,7 +15452,11 @@ function chooseSpeechVoice(voices, language, preferred = "") {
 }
 
 // src/voice-manager.js
-function mountVoiceManager(doc, host, synth, onSelect, onRefresh) {
+function voiceDiagnostics(synth) {
+  return { schemaVersion: 1, capturedAt: (/* @__PURE__ */ new Date()).toISOString(), apiAvailable: !!synth, voices: Array.from((synth == null ? void 0 : synth.getVoices()) || [], (v, index) => ({ index, name: v.name, lang: v.lang, voiceURI: v.voiceURI, default: !!v.default, localService: !!v.localService })) };
+}
+function mountVoiceManager(doc, host, synth, onSelect, onRefresh, onExport) {
+  var _a2;
   const box = doc.createElement("details");
   box.className = "brtts-voice-manager";
   const title = doc.createElement("summary");
@@ -15473,12 +15486,42 @@ function mountVoiceManager(doc, host, synth, onSelect, onRefresh) {
   refresh.type = "button";
   refresh.textContent = t("Refresh installed voices");
   box.append(refresh);
+  const diagnostics = doc.createElement("details");
+  const diagnosticTitle = doc.createElement("summary");
+  diagnosticTitle.textContent = t("All voices diagnostics (unfiltered)");
+  diagnostics.append(diagnosticTitle);
+  const report = doc.createElement("textarea");
+  report.readOnly = true;
+  report.rows = 10;
+  report.style.width = "100%";
+  report.setAttribute("aria-label", t("Full voice report"));
+  diagnostics.append(report);
+  const exportButton = doc.createElement("button");
+  exportButton.type = "button";
+  exportButton.textContent = t("Export all voices to vault");
+  exportButton.disabled = !onExport;
+  diagnostics.append(exportButton);
+  box.append(diagnostics);
+  exportButton.addEventListener("click", async () => {
+    exportButton.disabled = true;
+    try {
+      const data = JSON.stringify(voiceDiagnostics(synth), null, 2);
+      report.value = data;
+      const path5 = await onExport(data);
+      status.textContent = t("Voice report saved: {0}", path5);
+    } catch (error) {
+      status.textContent = t("Voice report failed: {0}", error.message);
+    } finally {
+      exportButton.disabled = !onExport;
+    }
+  });
   const list = doc.createElement("div");
   list.className = "brtts-voice-list";
   box.append(list);
   const render = () => {
     list.replaceChildren();
     const voices = (synth == null ? void 0 : synth.getVoices()) || [];
+    report.value = JSON.stringify(voiceDiagnostics(synth), null, 2);
     let count = 0;
     for (const [family, label] of [["zh", t("Chinese")], ["en", t("English")], ["ja", t("Japanese")]]) {
       const matches = voices.filter((v) => voiceFamily(v.lang) === family);
@@ -15496,7 +15539,12 @@ function mountVoiceManager(doc, host, synth, onSelect, onRefresh) {
         item.className = "brtts-voice-item";
         const name = doc.createElement("span");
         name.textContent = `${voice.name} \xB7 ${voice.lang} \xB7 ${voice.localService ? t("Local") : t("Online")}`;
+        name.title = voice.voiceURI;
         item.append(name);
+        const identity = doc.createElement("small");
+        identity.textContent = voice.voiceURI;
+        identity.style.overflowWrap = "anywhere";
+        item.append(identity);
         const use = doc.createElement("button");
         use.type = "button";
         use.textContent = t("Use this voice");
@@ -15519,13 +15567,21 @@ function mountVoiceManager(doc, host, synth, onSelect, onRefresh) {
     render();
   };
   synth == null ? void 0 : synth.addEventListener("voiceschanged", changed);
+  const visible = () => {
+    if (doc.visibilityState === "visible") changed();
+  };
+  doc.addEventListener("visibilitychange", visible);
+  (_a2 = doc.defaultView) == null ? void 0 : _a2.addEventListener("focus", changed);
   box.addEventListener("toggle", () => {
     if (box.open) render();
   });
   host.append(box);
   render();
   return () => {
+    var _a3;
     synth == null ? void 0 : synth.removeEventListener("voiceschanged", changed);
+    doc.removeEventListener("visibilitychange", visible);
+    (_a3 = doc.defaultView) == null ? void 0 : _a3.removeEventListener("focus", changed);
     box.remove();
   };
 }
@@ -15970,8 +16026,21 @@ function mountSpeech(view, root, top) {
     preview.start([{ text: samples[lang] || samples.en }]);
   });
   settings.append(audition);
-  const preview = queue ? new SpeechQueue(synth, win.SpeechSynthesisUtterance, () => {
+  const preview = queue ? new SpeechQueue(synth, win.SpeechSynthesisUtterance, (q) => {
+    status.textContent = q.state === "error" ? t("Voice test failed: {0}", q.error) : q.state === "finished" ? t("Voice test finished") : q.state === "playing" ? t("Voice test requested; confirm whether you hear audio") : "";
   }) : null;
+  const systemTest = button(t("Test system default voice (Chinese)"), () => {
+    if (!queue) return;
+    if (activeReader && activeReader !== queue) activeReader.stop();
+    activeReader = queue;
+    queue.pause();
+    preview.stop();
+    preview.voice = null;
+    preview.language = "zh-CN";
+    preview.rate = 1;
+    preview.start([{ text: "\u4F60\u597D\uFF0C\u8FD9\u662F\u7CFB\u7EDF\u9ED8\u8BA4\u4E2D\u6587\u58F0\u97F3\u6D4B\u8BD5\u3002\u672C\u6B21\u4E0D\u6307\u5B9A\u4EFB\u4F55\u97F3\u8272\u3002" }]);
+  });
+  settings.append(systemTest);
   for (const control of [rateSelect, voiceSelect]) control.addEventListener("change", () => {
     var _a3, _b, _c;
     if (control === rateSelect && ((_a3 = view.plugin.settings) == null ? void 0 : _a3.readerSyncPreferences)) {
@@ -16007,7 +16076,11 @@ function mountSpeech(view, root, top) {
     save({ ...readSaved(), language: voice.lang, voice: voice.voiceURI });
     savePrefs({ language: voice.lang, voice: voice.voiceURI, voicesByLanguage: { ...readPrefs().voicesByLanguage, [voiceFamily(voice.lang)]: voice.voiceURI } });
     refreshVoices(true);
-  }, () => refreshVoices());
+  }, () => refreshVoices(), async (data) => {
+    const path5 = `Book Reader Voice Diagnostics ${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`;
+    await view.plugin.app.vault.create(path5, data);
+    return path5;
+  });
   row.append(status);
   refreshVoices(true);
   rateSelect.value = String(readSaved().rate || 1);
