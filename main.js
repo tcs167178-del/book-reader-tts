@@ -80,9 +80,9 @@ var __privateWrapper = (obj, member, setter, getter) => ({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/value/is.js
+// node_modules/.pnpm/type@2.7.3/node_modules/type/value/is.js
 var require_is = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/value/is.js"(exports, module2) {
+  "node_modules/.pnpm/type@2.7.3/node_modules/type/value/is.js"(exports, module2) {
     "use strict";
     var _undefined = void 0;
     module2.exports = function(value) {
@@ -91,9 +91,9 @@ var require_is = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/object/is.js
+// node_modules/.pnpm/type@2.7.3/node_modules/type/object/is.js
 var require_is2 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/object/is.js"(exports, module2) {
+  "node_modules/.pnpm/type@2.7.3/node_modules/type/object/is.js"(exports, module2) {
     "use strict";
     var isValue = require_is();
     var possibleTypes = {
@@ -109,9 +109,9 @@ var require_is2 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/prototype/is.js
+// node_modules/.pnpm/type@2.7.3/node_modules/type/prototype/is.js
 var require_is3 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/prototype/is.js"(exports, module2) {
+  "node_modules/.pnpm/type@2.7.3/node_modules/type/prototype/is.js"(exports, module2) {
     "use strict";
     var isObject = require_is2();
     module2.exports = function(value) {
@@ -126,9 +126,9 @@ var require_is3 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/function/is.js
+// node_modules/.pnpm/type@2.7.3/node_modules/type/function/is.js
 var require_is4 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/function/is.js"(exports, module2) {
+  "node_modules/.pnpm/type@2.7.3/node_modules/type/function/is.js"(exports, module2) {
     "use strict";
     var isPrototype = require_is3();
     module2.exports = function(value) {
@@ -146,9 +146,9 @@ var require_is4 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/plain-function/is.js
+// node_modules/.pnpm/type@2.7.3/node_modules/type/plain-function/is.js
 var require_is5 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/type@2.7.3/node_modules/type/plain-function/is.js"(exports, module2) {
+  "node_modules/.pnpm/type@2.7.3/node_modules/type/plain-function/is.js"(exports, module2) {
     "use strict";
     var isFunction = require_is4();
     var classRe = /^\s*class[\s{/}]/;
@@ -161,9 +161,9 @@ var require_is5 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/is-implemented.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/is-implemented.js
 var require_is_implemented = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/is-implemented.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/is-implemented.js"(exports, module2) {
     "use strict";
     module2.exports = function() {
       var assign = Object.assign, obj;
@@ -175,9 +175,9 @@ var require_is_implemented = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/is-implemented.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/is-implemented.js
 var require_is_implemented2 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/is-implemented.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/is-implemented.js"(exports, module2) {
     "use strict";
     module2.exports = function() {
       try {
@@ -190,18 +190,18 @@ var require_is_implemented2 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/function/noop.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/function/noop.js
 var require_noop = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/function/noop.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/function/noop.js"(exports, module2) {
     "use strict";
     module2.exports = function() {
     };
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/is-value.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/is-value.js
 var require_is_value = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/is-value.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/is-value.js"(exports, module2) {
     "use strict";
     var _undefined = require_noop()();
     module2.exports = function(val) {
@@ -210,9 +210,9 @@ var require_is_value = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/shim.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/shim.js
 var require_shim = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/shim.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/shim.js"(exports, module2) {
     "use strict";
     var isValue = require_is_value();
     var keys = Object.keys;
@@ -222,17 +222,17 @@ var require_shim = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/index.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/index.js
 var require_keys = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/index.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/keys/index.js"(exports, module2) {
     "use strict";
     module2.exports = require_is_implemented2()() ? Object.keys : require_shim();
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-value.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-value.js
 var require_valid_value = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-value.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-value.js"(exports, module2) {
     "use strict";
     var isValue = require_is_value();
     module2.exports = function(value) {
@@ -242,9 +242,9 @@ var require_valid_value = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/shim.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/shim.js
 var require_shim2 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/shim.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/shim.js"(exports, module2) {
     "use strict";
     var keys = require_keys();
     var value = require_valid_value();
@@ -269,17 +269,17 @@ var require_shim2 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/index.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/index.js
 var require_assign = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/index.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/assign/index.js"(exports, module2) {
     "use strict";
     module2.exports = require_is_implemented()() ? Object.assign : require_shim2();
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/normalize-options.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/normalize-options.js
 var require_normalize_options = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/normalize-options.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/normalize-options.js"(exports, module2) {
     "use strict";
     var isValue = require_is_value();
     var forEach = Array.prototype.forEach;
@@ -299,9 +299,9 @@ var require_normalize_options = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/is-implemented.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/is-implemented.js
 var require_is_implemented3 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/is-implemented.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/is-implemented.js"(exports, module2) {
     "use strict";
     var str = "razdwatrzy";
     module2.exports = function() {
@@ -311,9 +311,9 @@ var require_is_implemented3 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/shim.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/shim.js
 var require_shim3 = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/shim.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/shim.js"(exports, module2) {
     "use strict";
     var indexOf = String.prototype.indexOf;
     module2.exports = function(searchString) {
@@ -322,17 +322,17 @@ var require_shim3 = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/index.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/index.js
 var require_contains = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/index.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/string/#/contains/index.js"(exports, module2) {
     "use strict";
     module2.exports = require_is_implemented3()() ? String.prototype.contains : require_shim3();
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/d@1.0.2/node_modules/d/index.js
+// node_modules/.pnpm/d@1.0.2/node_modules/d/index.js
 var require_d = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/d@1.0.2/node_modules/d/index.js"(exports, module2) {
+  "node_modules/.pnpm/d@1.0.2/node_modules/d/index.js"(exports, module2) {
     "use strict";
     var isValue = require_is();
     var isPlainFunction = require_is5();
@@ -393,9 +393,9 @@ var require_d = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-callable.js
+// node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-callable.js
 var require_valid_callable = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-callable.js"(exports, module2) {
+  "node_modules/.pnpm/es5-ext@0.10.64/node_modules/es5-ext/object/valid-callable.js"(exports, module2) {
     "use strict";
     module2.exports = function(fn) {
       if (typeof fn !== "function") throw new TypeError(fn + " is not a function");
@@ -404,9 +404,9 @@ var require_valid_callable = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/event-emitter@0.3.5/node_modules/event-emitter/index.js
+// node_modules/.pnpm/event-emitter@0.3.5/node_modules/event-emitter/index.js
 var require_event_emitter = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/event-emitter@0.3.5/node_modules/event-emitter/index.js"(exports, module2) {
+  "node_modules/.pnpm/event-emitter@0.3.5/node_modules/event-emitter/index.js"(exports, module2) {
     "use strict";
     var d = require_d();
     var callable = require_valid_callable();
@@ -525,9 +525,9 @@ var require_event_emitter = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/conventions.js
+// node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/conventions.js
 var require_conventions = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/conventions.js"(exports) {
+  "node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/conventions.js"(exports) {
     "use strict";
     function find(list, predicate, ac) {
       if (ac === void 0) {
@@ -652,9 +652,9 @@ var require_conventions = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom.js
+// node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom.js
 var require_dom = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom.js"(exports) {
+  "node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom.js"(exports) {
     var conventions = require_conventions();
     var find = conventions.find;
     var NAMESPACE = conventions.NAMESPACE;
@@ -2066,9 +2066,9 @@ var require_dom = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/entities.js
+// node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/entities.js
 var require_entities = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/entities.js"(exports) {
+  "node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/entities.js"(exports) {
     "use strict";
     var freeze = require_conventions().freeze;
     exports.XML_ENTITIES = freeze({
@@ -4209,9 +4209,9 @@ var require_entities = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/sax.js
+// node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/sax.js
 var require_sax = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/sax.js"(exports) {
+  "node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/sax.js"(exports) {
     var NAMESPACE = require_conventions().NAMESPACE;
     var nameStartChar = /[A-Z_a-z\xC0-\xD6\xD8-\xF6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/;
     var nameChar = new RegExp("[\\-\\.0-9" + nameStartChar.source.slice(1, -1) + "\\u00B7\\u0300-\\u036F\\u203F-\\u2040]");
@@ -4790,9 +4790,9 @@ var require_sax = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom-parser.js
+// node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom-parser.js
 var require_dom_parser = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom-parser.js"(exports) {
+  "node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/dom-parser.js"(exports) {
     var conventions = require_conventions();
     var dom = require_dom();
     var entities = require_entities();
@@ -4999,9 +4999,9 @@ var require_dom_parser = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/index.js
+// node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/index.js
 var require_lib = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/index.js"(exports) {
+  "node_modules/.pnpm/@xmldom+xmldom@0.7.13/node_modules/@xmldom/xmldom/lib/index.js"(exports) {
     var dom = require_dom();
     exports.DOMImplementation = dom.DOMImplementation;
     exports.XMLSerializer = dom.XMLSerializer;
@@ -5009,9 +5009,9 @@ var require_lib = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/path-webpack@0.0.3/node_modules/path-webpack/path.js
+// node_modules/.pnpm/path-webpack@0.0.3/node_modules/path-webpack/path.js
 var require_path = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/path-webpack@0.0.3/node_modules/path-webpack/path.js"(exports, module2) {
+  "node_modules/.pnpm/path-webpack@0.0.3/node_modules/path-webpack/path.js"(exports, module2) {
     "use strict";
     if (!process2) {
       process2 = {
@@ -5443,9 +5443,9 @@ var require_path = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/svg.js
+// node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/svg.js
 var require_svg = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/svg.js"(exports) {
+  "node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/svg.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", {
       value: true
@@ -5460,9 +5460,9 @@ var require_svg = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/events.js
+// node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/events.js
 var require_events = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/events.js"(exports) {
+  "node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/events.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", {
       value: true
@@ -5540,9 +5540,9 @@ var require_events = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/marks.js
+// node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/marks.js
 var require_marks = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/marks.js"(exports) {
+  "node_modules/.pnpm/marks-pane@1.0.9/node_modules/marks-pane/lib/marks.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", {
       value: true
@@ -5853,9 +5853,9 @@ var require_marks = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObject.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObject.js
 var require_isObject = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObject.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObject.js"(exports, module2) {
     function isObject(value) {
       var type2 = typeof value;
       return value != null && (type2 == "object" || type2 == "function");
@@ -5864,17 +5864,17 @@ var require_isObject = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_freeGlobal.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_freeGlobal.js
 var require_freeGlobal = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_freeGlobal.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_freeGlobal.js"(exports, module2) {
     var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
     module2.exports = freeGlobal;
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_root.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_root.js
 var require_root = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_root.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_root.js"(exports, module2) {
     var freeGlobal = require_freeGlobal();
     var freeSelf = typeof self == "object" && self && self.Object === Object && self;
     var root = freeGlobal || freeSelf || Function("return this")();
@@ -5882,9 +5882,9 @@ var require_root = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/now.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/now.js
 var require_now = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/now.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/now.js"(exports, module2) {
     var root = require_root();
     var now = function() {
       return root.Date.now();
@@ -5893,9 +5893,9 @@ var require_now = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_trimmedEndIndex.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_trimmedEndIndex.js
 var require_trimmedEndIndex = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_trimmedEndIndex.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_trimmedEndIndex.js"(exports, module2) {
     var reWhitespace = /\s/;
     function trimmedEndIndex(string) {
       var index = string.length;
@@ -5907,9 +5907,9 @@ var require_trimmedEndIndex = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseTrim.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseTrim.js
 var require_baseTrim = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseTrim.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseTrim.js"(exports, module2) {
     var trimmedEndIndex = require_trimmedEndIndex();
     var reTrimStart = /^\s+/;
     function baseTrim(string) {
@@ -5919,18 +5919,18 @@ var require_baseTrim = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_Symbol.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_Symbol.js
 var require_Symbol = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_Symbol.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_Symbol.js"(exports, module2) {
     var root = require_root();
     var Symbol2 = root.Symbol;
     module2.exports = Symbol2;
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_getRawTag.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_getRawTag.js
 var require_getRawTag = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_getRawTag.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_getRawTag.js"(exports, module2) {
     var Symbol2 = require_Symbol();
     var objectProto = Object.prototype;
     var hasOwnProperty2 = objectProto.hasOwnProperty;
@@ -5957,9 +5957,9 @@ var require_getRawTag = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_objectToString.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_objectToString.js
 var require_objectToString = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_objectToString.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_objectToString.js"(exports, module2) {
     var objectProto = Object.prototype;
     var nativeObjectToString = objectProto.toString;
     function objectToString(value) {
@@ -5969,9 +5969,9 @@ var require_objectToString = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseGetTag.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseGetTag.js
 var require_baseGetTag = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseGetTag.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseGetTag.js"(exports, module2) {
     var Symbol2 = require_Symbol();
     var getRawTag = require_getRawTag();
     var objectToString = require_objectToString();
@@ -5988,9 +5988,9 @@ var require_baseGetTag = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObjectLike.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObjectLike.js
 var require_isObjectLike = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObjectLike.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isObjectLike.js"(exports, module2) {
     function isObjectLike(value) {
       return value != null && typeof value == "object";
     }
@@ -5998,9 +5998,9 @@ var require_isObjectLike = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isSymbol.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isSymbol.js
 var require_isSymbol = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isSymbol.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/isSymbol.js"(exports, module2) {
     var baseGetTag = require_baseGetTag();
     var isObjectLike = require_isObjectLike();
     var symbolTag = "[object Symbol]";
@@ -6011,9 +6011,9 @@ var require_isSymbol = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/toNumber.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/toNumber.js
 var require_toNumber = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/toNumber.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/toNumber.js"(exports, module2) {
     var baseTrim = require_baseTrim();
     var isObject = require_isObject();
     var isSymbol = require_isSymbol();
@@ -6044,9 +6044,9 @@ var require_toNumber = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/debounce.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/debounce.js
 var require_debounce = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/debounce.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/debounce.js"(exports, module2) {
     var isObject = require_isObject();
     var now = require_now();
     var toNumber = require_toNumber();
@@ -6138,9 +6138,9 @@ var require_debounce = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/throttle.js
+// node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/throttle.js
 var require_throttle = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/throttle.js"(exports, module2) {
+  "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/throttle.js"(exports, module2) {
     var debounce2 = require_debounce();
     var isObject = require_isObject();
     var FUNC_ERROR_TEXT = "Expected a function";
@@ -6163,9 +6163,9 @@ var require_throttle = __commonJS({
   }
 });
 
-// ../book-reader-tts/node_modules/.pnpm/jszip@3.10.2/node_modules/jszip/dist/jszip.js
+// node_modules/.pnpm/jszip@3.10.2/node_modules/jszip/dist/jszip.js
 var require_jszip = __commonJS({
-  "../book-reader-tts/node_modules/.pnpm/jszip@3.10.2/node_modules/jszip/dist/jszip.js"(exports, module2) {
+  "node_modules/.pnpm/jszip@3.10.2/node_modules/jszip/dist/jszip.js"(exports, module2) {
     (function(f) {
       if (typeof exports === "object" && typeof module2 !== "undefined") {
         module2.exports = f();
@@ -14397,7 +14397,10 @@ var zh_default = {
   "Not enough previous-week data for a comparison": "\u6682\u65E0\u8DB3\u591F\u7684\u524D\u4E00\u5468\u6570\u636E\u53EF\u4F9B\u6BD4\u8F83",
   "Read on {0} of the last 7 days": "\u8FD1 7 \u5929\u4E2D\uFF0C\u6709 {0} \u5929\u8FDB\u884C\u4E86\u9605\u8BFB",
   "Most-read books by time": "\u9605\u8BFB\u65F6\u957F\u6700\u591A\u7684\u4E66",
-  "Open a book to start recording per-book reading time": "\u6253\u5F00\u4E00\u672C\u4E66\uFF0C\u5373\u53EF\u5F00\u59CB\u8BB0\u5F55\u6BCF\u672C\u4E66\u7684\u9605\u8BFB\u65F6\u957F"
+  "Open a book to start recording per-book reading time": "\u6253\u5F00\u4E00\u672C\u4E66\uFF0C\u5373\u53EF\u5F00\u59CB\u8BB0\u5F55\u6BCF\u672C\u4E66\u7684\u9605\u8BFB\u65F6\u957F",
+  "Background speech experiment": "\u540E\u53F0\u8FDE\u7EED\u6717\u8BFB\u5B9E\u9A8C",
+  "Queues up to 32 phrases in advance. iPad may still suspend speech when locked. Voice and speed changes require Apply to current phrase for already queued text.": "\u63D0\u524D\u63D0\u4EA4\u6700\u591A 32 \u53E5\u3002iPad \u9501\u5C4F\u540E\u4ECD\u53EF\u80FD\u4E2D\u65AD\u6717\u8BFB\uFF1B\u5DF2\u6392\u961F\u8BED\u53E5\u7684\u97F3\u8272\u548C\u8BED\u901F\u9700\u70B9\u51FB\u201C\u5E94\u7528\u5230\u5F53\u524D\u53E5\u201D\u624D\u80FD\u66F4\u65B0\u3002",
+  "Speech was interrupted in the background. Press Continue to resume from the saved phrase.": "\u540E\u53F0\u6717\u8BFB\u5DF2\u4E2D\u65AD\uFF0C\u70B9\u51FB\u201C\u7EE7\u7EED\u201D\u4ECE\u4FDD\u5B58\u7684\u8BED\u53E5\u7EED\u542C\u3002"
 };
 
 // src/i18n.js
@@ -15902,12 +15905,16 @@ var SpeechQueue = class {
     this.rate = 1;
     this.voice = null;
     this.language = "";
+    this.prefetch = 1;
+    this.pending = /* @__PURE__ */ new Map();
+    this.nextIndex = 0;
   }
   start(items, index = 0) {
     this.stop();
     this.items = items;
     this.index = Math.max(0, Math.min(index, items.length - 1));
     if (!items.length) return;
+    this.nextIndex = this.index;
     this.state = "playing";
     this.speak();
   }
@@ -15920,46 +15927,73 @@ var SpeechQueue = class {
       return;
     }
     const generation = this.generation;
-    const utterance = new this.Utterance(this.items[this.index].text);
-    utterance.rate = Math.max(0.5, Math.min(3, Number(this.rate) || 1));
-    const resolved = (_a2 = this.resolveVoice) == null ? void 0 : _a2.call(this, utterance.text);
-    const language = (resolved == null ? void 0 : resolved.language) || this.language;
-    const voice = resolved ? resolved.voice : this.voice;
-    if (language && language !== "auto") utterance.lang = language;
-    if (voice) {
-      utterance.voice = voice;
-      utterance.lang = voice.lang;
+    const limit = Math.max(1, Math.min(32, Math.floor(Number(this.prefetch) || 1)));
+    while (this.state === "playing" && generation === this.generation && this.pending.size < limit && this.nextIndex < this.items.length) {
+      const index = this.nextIndex++;
+      const utterance = new this.Utterance(this.items[index].text);
+      utterance.rate = Math.max(0.5, Math.min(3, Number(this.rate) || 1));
+      const resolved = (_a2 = this.resolveVoice) == null ? void 0 : _a2.call(this, utterance.text);
+      const language = (resolved == null ? void 0 : resolved.language) || this.language;
+      const voice = resolved ? resolved.voice : this.voice;
+      if (language && language !== "auto") utterance.lang = language;
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      }
+      const valid = () => generation === this.generation && this.state === "playing" && this.pending.has(index);
+      utterance.onstart = () => {
+        if (!valid() || index < this.index) return;
+        this.index = index;
+        this.utterance = utterance;
+        this.update(this);
+      };
+      utterance.onend = () => {
+        if (!valid()) return;
+        this.pending.delete(index);
+        this.index = Math.max(this.index, index + 1);
+        if (this.index >= this.items.length) {
+          this.state = "finished";
+          this.utterance = null;
+          this.update(this);
+        } else {
+          this.update(this);
+          this.speak();
+        }
+      };
+      utterance.onerror = (event) => {
+        if (valid()) this.fail(event.error || "speech-error");
+      };
+      this.pending.set(index, utterance);
+      if (index === this.index) {
+        this.utterance = utterance;
+        this.update(this);
+      }
+      try {
+        this.synth.speak(utterance);
+      } catch (e) {
+        if (valid()) this.fail(e.message);
+      }
     }
-    utterance.onend = () => {
-      if (generation !== this.generation || this.state !== "playing") return;
-      this.index++;
-      this.speak();
-    };
-    utterance.onerror = (event) => {
-      if (generation !== this.generation) return;
-      this.error = event.error || "speech-error";
-      this.state = "error";
-      this.update(this);
-    };
-    this.utterance = utterance;
+  }
+  fail(error) {
+    this.error = error;
+    this.generation++;
+    this.state = "error";
+    this.pending.clear();
+    this.synth.cancel();
     this.update(this);
-    try {
-      this.synth.speak(utterance);
-    } catch (e) {
-      this.error = e.message;
-      this.state = "error";
-      this.update(this);
-    }
   }
   pause() {
     if (this.state !== "playing") return;
     this.generation++;
     this.state = "paused";
+    this.pending.clear();
     this.synth.cancel();
     this.update(this);
   }
   resume() {
     if (this.state === "paused") {
+      this.nextIndex = this.index;
       this.state = "playing";
       this.speak();
     }
@@ -15967,8 +16001,10 @@ var SpeechQueue = class {
   seek(index) {
     if (!this.items.length) return;
     this.generation++;
+    this.pending.clear();
     this.synth.cancel();
     this.index = Math.max(0, Math.min(index, this.items.length - 1));
+    this.nextIndex = this.index;
     this.state = "playing";
     this.speak();
   }
@@ -15976,6 +16012,7 @@ var SpeechQueue = class {
     const owned = this.state === "playing" || this.state === "paused";
     this.generation++;
     this.state = "idle";
+    this.pending.clear();
     if (owned) this.synth.cancel();
     this.utterance = null;
     this.update(this);
@@ -16206,8 +16243,39 @@ function mountSpeech(view, root, top) {
     }
     if (queue) update(queue);
   });
+  const backgroundBox = doc.createElement("input");
+  backgroundBox.type = "checkbox";
+  backgroundBox.setAttribute("aria-label", t("Background speech experiment"));
+  backgroundBox.checked = readPrefs().backgroundSpeech === true;
+  field(t("Background speech experiment"), backgroundBox);
+  if (queue) queue.prefetch = backgroundBox.checked ? 32 : 1;
+  const backgroundHint = doc.createElement("small");
+  backgroundHint.textContent = t("Queues up to 32 phrases in advance. iPad may still suspend speech when locked. Voice and speed changes require Apply to current phrase for already queued text.");
+  settings.append(backgroundHint);
+  backgroundBox.addEventListener("change", () => {
+    savePrefs({ backgroundSpeech: backgroundBox.checked });
+    if (queue) {
+      queue.prefetch = backgroundBox.checked ? 32 : 1;
+      if (queue.state === "playing") queue.seek(queue.index);
+    }
+  });
+  let wasHidden = false;
+  const visibilityChanged = () => {
+    if (doc.visibilityState === "hidden") {
+      wasHidden = true;
+      return;
+    }
+    if (doc.visibilityState !== "visible" || !wasHidden) return;
+    wasHidden = false;
+    if ((queue == null ? void 0 : queue.state) === "playing" && synth.speaking === false && synth.pending === false) {
+      queue.pause();
+      status.textContent = t("Speech was interrupted in the background. Press Continue to resume from the saved phrase.");
+    }
+  };
+  doc.addEventListener("visibilitychange", visibilityChanged);
   const followBox = doc.createElement("input");
   followBox.type = "checkbox";
+  followBox.setAttribute("aria-label", t("Follow speech"));
   followBox.checked = true;
   field(t("Follow speech"), followBox);
   followBox.addEventListener("change", () => {
@@ -16404,6 +16472,7 @@ function mountSpeech(view, root, top) {
       if (queue) queue.rate = Number(rateSelect.value);
     },
     dispose() {
+      doc.removeEventListener("visibilitychange", visibilityChanged);
       disposePopover();
       disposeVoiceManager();
       preview == null ? void 0 : preview.stop();
@@ -16425,7 +16494,7 @@ function mountSpeech(view, root, top) {
 // src/main.js
 var import_obsidian4 = require("obsidian");
 
-// ../book-reader-tts/node_modules/.pnpm/pdfjs-dist@6.3.289/node_modules/pdfjs-dist/build/pdf.mjs
+// node_modules/.pnpm/pdfjs-dist@6.3.289/node_modules/pdfjs-dist/build/pdf.mjs
 var import_meta = {};
 var isNodeJS = typeof process === "object" && process + "" === "[object process]" && !process.versions.nw && !(process.versions.electron && process.type && process.type !== "browser");
 var BBOX_INIT = [Infinity, Infinity, -Infinity, -Infinity];
@@ -45295,10 +45364,10 @@ globalThis.pdfjsLib = {
   XfaLayer
 };
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/book.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/book.js
 var import_event_emitter10 = __toESM(require_event_emitter());
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/core.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/core.js
 var core_exports = {};
 __export(core_exports, {
   RangeObject: () => RangeObject,
@@ -45831,7 +45900,7 @@ var RangeObject = class {
   }
 };
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/path.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/path.js
 var import_path_webpack = __toESM(require_path());
 var Path = class {
   constructor(pathString) {
@@ -45911,7 +45980,7 @@ var Path = class {
 };
 var path_default = Path;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/url.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/url.js
 var import_path_webpack2 = __toESM(require_path());
 var Url = class {
   constructor(urlString, baseString) {
@@ -45992,7 +46061,7 @@ var Url = class {
 };
 var url_default = Url;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/epubcfi.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/epubcfi.js
 var ELEMENT_NODE2 = 1;
 var TEXT_NODE2 = 3;
 var DOCUMENT_NODE = 9;
@@ -46765,7 +46834,7 @@ var EpubCFI = class _EpubCFI {
 };
 var epubcfi_default = EpubCFI;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/hook.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/hook.js
 var Hook = class {
   constructor(context) {
     this.context = context || this;
@@ -46830,7 +46899,7 @@ var Hook = class {
 };
 var hook_default = Hook;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/replacements.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/replacements.js
 function replaceBase(doc, section) {
   var base;
   var head;
@@ -46933,7 +47002,7 @@ function substitute(content, urls, replacements) {
   return content;
 }
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/request.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/request.js
 function request(url, type2, withCredentials, headers) {
   var supportsURL = typeof window != "undefined" ? window.URL : false;
   var BLOB_RESPONSE = supportsURL ? "blob" : "arraybuffer";
@@ -47037,7 +47106,7 @@ function request(url, type2, withCredentials, headers) {
 }
 var request_default = request;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/section.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/section.js
 var import_xmldom2 = __toESM(require_lib());
 var Section = class {
   constructor(item, hooks) {
@@ -47300,7 +47369,7 @@ var Section = class {
 };
 var section_default = Section;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/spine.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/spine.js
 var Spine = class {
   constructor() {
     this.spineItems = [];
@@ -47515,7 +47584,7 @@ var Spine = class {
 };
 var spine_default = Spine;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/queue.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/queue.js
 var Queue = class {
   constructor(context) {
     this._q = [];
@@ -47663,7 +47732,7 @@ var Queue = class {
 };
 var queue_default = Queue;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/constants.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/constants.js
 var EPUBJS_VERSION = "0.3";
 var DOM_EVENTS = ["keydown", "keyup", "keypressed", "mouseup", "mousedown", "mousemove", "click", "touchend", "touchstart", "touchmove"];
 var EVENTS = {
@@ -47724,7 +47793,7 @@ var EVENTS = {
   }
 };
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/locations.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/locations.js
 var import_event_emitter = __toESM(require_event_emitter());
 var Locations = class {
   constructor(spine, request2, pause) {
@@ -48102,7 +48171,7 @@ var Locations = class {
 (0, import_event_emitter.default)(Locations.prototype);
 var locations_default = Locations;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/container.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/container.js
 var import_path_webpack3 = __toESM(require_path());
 var Container = class {
   constructor(containerDocument) {
@@ -48138,7 +48207,7 @@ var Container = class {
 };
 var container_default = Container;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/packaging.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/packaging.js
 var Packaging = class {
   constructor(packageDocument) {
     this.manifest = {};
@@ -48418,7 +48487,7 @@ var Packaging = class {
 };
 var packaging_default = Packaging;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/navigation.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/navigation.js
 var Navigation = class {
   constructor(xml) {
     this.toc = [];
@@ -48705,7 +48774,7 @@ var Navigation = class {
 };
 var navigation_default = Navigation;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/mime.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/mime.js
 var table = {
   "application": {
     "ecmascript": ["es", "ecma"],
@@ -48867,7 +48936,7 @@ function lookup(filename) {
 }
 var mime_default = { lookup };
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/resources.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/resources.js
 var import_path_webpack4 = __toESM(require_path());
 var Resources = class {
   constructor(manifest, options) {
@@ -49106,7 +49175,7 @@ var Resources = class {
 };
 var resources_default = Resources;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/pagelist.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/pagelist.js
 var PageList = class {
   constructor(xml) {
     this.pages = [];
@@ -49311,10 +49380,10 @@ var PageList = class {
 };
 var pagelist_default = PageList;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/rendition.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/rendition.js
 var import_event_emitter8 = __toESM(require_event_emitter());
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/layout.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/layout.js
 var import_event_emitter2 = __toESM(require_event_emitter());
 var Layout = class {
   constructor(settings) {
@@ -49502,7 +49571,7 @@ var Layout = class {
 (0, import_event_emitter2.default)(Layout.prototype);
 var layout_default = Layout;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/themes.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/themes.js
 var Themes = class {
   constructor(rendition) {
     this.rendition = rendition;
@@ -49734,10 +49803,10 @@ var Themes = class {
 };
 var themes_default = Themes;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/contents.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/contents.js
 var import_event_emitter3 = __toESM(require_event_emitter());
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/mapping.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/mapping.js
 var Mapping = class {
   constructor(layout, direction, axis, dev = false) {
     this.layout = layout;
@@ -50119,7 +50188,7 @@ var Mapping = class {
 };
 var mapping_default = Mapping;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/contents.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/contents.js
 var hasNavigator = typeof navigator !== "undefined";
 var isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 var isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
@@ -51091,7 +51160,7 @@ var Contents = class {
 (0, import_event_emitter3.default)(Contents.prototype);
 var contents_default = Contents;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/annotations.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/annotations.js
 var import_event_emitter4 = __toESM(require_event_emitter());
 var Annotations = class {
   constructor(rendition) {
@@ -51331,7 +51400,7 @@ var Annotation = class {
 (0, import_event_emitter4.default)(Annotation.prototype);
 var annotations_default = Annotations;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/views/iframe.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/views/iframe.js
 var import_event_emitter5 = __toESM(require_event_emitter());
 var import_marks_pane = __toESM(require_marks());
 var IframeView = class {
@@ -51933,10 +52002,10 @@ var IframeView = class {
 (0, import_event_emitter5.default)(IframeView.prototype);
 var iframe_default = IframeView;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/default/index.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/default/index.js
 var import_event_emitter6 = __toESM(require_event_emitter());
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/scrolltype.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/utils/scrolltype.js
 function scrollType() {
   var type2 = "reverse";
   var definer = createDefiner();
@@ -51982,7 +52051,7 @@ function createDefiner() {
   return definer;
 }
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/helpers/stage.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/helpers/stage.js
 var import_throttle = __toESM(require_throttle());
 var Stage = class {
   constructor(_options) {
@@ -52252,7 +52321,7 @@ var Stage = class {
 };
 var stage_default = Stage;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/helpers/views.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/helpers/views.js
 var Views = class {
   constructor(container) {
     this.container = container;
@@ -52385,7 +52454,7 @@ var Views = class {
 };
 var views_default = Views;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/default/index.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/default/index.js
 var DefaultViewManager = class {
   constructor(options) {
     this.name = "default";
@@ -53125,7 +53194,7 @@ var DefaultViewManager = class {
 (0, import_event_emitter6.default)(DefaultViewManager.prototype);
 var default_default = DefaultViewManager;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/helpers/snap.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/helpers/snap.js
 var import_event_emitter7 = __toESM(require_event_emitter());
 var PI_D2 = Math.PI / 2;
 var EASING_EQUATIONS = {
@@ -53380,7 +53449,7 @@ var Snap = class {
 (0, import_event_emitter7.default)(Snap.prototype);
 var snap_default = Snap;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/continuous/index.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/managers/continuous/index.js
 var import_debounce = __toESM(require_debounce());
 var ContinuousViewManager = class extends default_default {
   constructor(options) {
@@ -53804,7 +53873,7 @@ var ContinuousViewManager = class extends default_default {
 };
 var continuous_default = ContinuousViewManager;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/rendition.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/rendition.js
 var Rendition = class {
   constructor(book, options) {
     this.settings = extend(this.settings || {}, {
@@ -54521,7 +54590,7 @@ var Rendition = class {
 (0, import_event_emitter8.default)(Rendition.prototype);
 var rendition_default = Rendition;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/archive.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/archive.js
 var import_jszip = __toESM(require_jszip());
 var Archive = class {
   constructor() {
@@ -54723,14 +54792,14 @@ var Archive = class {
 };
 var archive_default = Archive;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/store.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/store.js
 var import_event_emitter9 = __toESM(require_event_emitter());
 
 // build-stubs/empty.js
 var empty = {};
 var empty_default = empty;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/store.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/store.js
 var Store = class {
   constructor(name, requester, resolver) {
     this.urlCache = {};
@@ -55026,7 +55095,7 @@ var Store = class {
 (0, import_event_emitter9.default)(Store.prototype);
 var store_default = Store;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/displayoptions.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/displayoptions.js
 var DisplayOptions = class {
   constructor(displayOptionsDocument) {
     this.interactive = "";
@@ -55082,7 +55151,7 @@ var DisplayOptions = class {
 };
 var displayoptions_default = DisplayOptions;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/book.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/book.js
 var CONTAINER_PATH = "META-INF/container.xml";
 var IBOOKS_DISPLAY_OPTIONS_PATH = "META-INF/com.apple.ibooks.display-options.xml";
 var INPUT_TYPE = {
@@ -55599,7 +55668,7 @@ var Book = class {
 (0, import_event_emitter10.default)(Book.prototype);
 var book_default = Book;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/epub.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/epub.js
 function ePub(url, options) {
   return new book_default(url, options);
 }
@@ -55614,7 +55683,7 @@ ePub.CFI = epubcfi_default;
 ePub.utils = core_exports;
 var epub_default = ePub;
 
-// ../book-reader-tts/node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/index.js
+// node_modules/.pnpm/epubjs@0.3.93/node_modules/epubjs/src/index.js
 var src_default = epub_default;
 
 // src/main.js
